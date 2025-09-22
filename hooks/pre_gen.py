@@ -16,16 +16,20 @@ def validate_project_config(context: dict[str, Any]) -> None:
     """Validate the Copier context before generation begins."""
 
     project_slug = context.get("project_slug", "")
-    # project_slug historically used kebab-case; for Android package validation
-    # we enforce/normalize to lowercase identifiers (letters, digits, underscore)
-    # starting with a lowercase letter.
+    # Historically project_slug used kebab-case. Do not reject non-compliant
+    # raw inputs here; instead we normalize later so template rendering behaves
+    # predictably. Strict mode (fail_on_invalid_identifiers) below still enforces
+    # Android identifier rules on the original raw values when enabled.
     if not project_slug:
         print("❌ Missing project_slug in Copier context.")
         sys.exit(1)
 
     email = context.get("author_email", "")
-    if "@" not in email:
-        print("❌ Invalid author_email format.")
+    # Basic but stricter email validation: local@domain.tld (does not attempt to
+    # fully validate RFC 5322 but rejects obvious invalid formats)
+    email_re = re.compile(r"^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$")
+    if not email_re.fullmatch(email):
+        print("❌ Invalid author_email format. Expected name@domain.tld")
         sys.exit(1)
 
     architecture = context.get("architecture_style")
