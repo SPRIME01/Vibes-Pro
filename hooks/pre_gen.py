@@ -94,12 +94,14 @@ def main() -> None:
     # Honor strict mode if requested in the copier context
     fail_on_invalid = bool(context.get("fail_on_invalid_identifiers", False))
 
-    # If strict, error out if identifiers are invalid
+    # If strict, error out if the original (raw) identifiers are invalid.
+    # Strict mode means the user must supply already-valid identifiers; we
+    # don't auto-normalize in that case.
     if fail_on_invalid:
-        if not is_valid_identifier(normalized_project_slug) or not is_valid_identifier(normalized_app_name):
+        if not is_valid_identifier(project_slug) or not is_valid_identifier(app_name):
             print(
                 "❌ Invalid project_slug or app_name for Android package naming."
-                " Set 'fail_on_invalid_identifiers' to false to auto-normalize."
+                " Set 'fail_on_invalid_identifiers' to false to allow auto-normalization."
             )
             print(f"project_slug: '{project_slug}' -> normalized: '{normalized_project_slug}'")
             print(f"app_name: '{app_name}' -> normalized: '{normalized_app_name}'")

@@ -68,6 +68,18 @@ app_name:
   default: "{{ project_slug }}"
   validator: "{% if not app_name.replace('-', '').isalnum() %}Invalid app name{% endif %}"
 
+# Controls behavior when generated identifiers (project_slug/app_name) do not
+# conform to Android package segment rules (reverse-domain, lowercase,
+# characters [a-z0-9_], must start with a letter). When true, the pre-gen hook
+# will FAIL the generation with a clear error. When false (default), the hook
+# will automatically normalize values (lowercase, replace invalid chars with
+# underscores and prefix with 'a_' if necessary) and write them back to the
+# answers file so templates render with safe identifiers.
+fail_on_invalid_identifiers:
+  type: bool
+  help: "Fail generation if project/app identifiers are invalid for Android package naming"
+  default: false
+
 backend_framework:
   type: str
   help: "Backend framework"

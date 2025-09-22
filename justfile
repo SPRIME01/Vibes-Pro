@@ -95,6 +95,10 @@ test-python:
 	@echo "🧪 Running Python tests..."
 	uv run pytest
 
+test-python-coverage:
+	@echo "🧪 Running Python tests with coverage..."
+	python -m pytest --maxfail=1 --disable-warnings -q --cov=.
+
 test-node:
 	@echo "🧪 Running Node.js tests..."
 	pnpm test
@@ -119,6 +123,34 @@ test-generation:
 			fi; \
 		}; \
 	}
+
+# --- CI Tasks (DRY for GitHub Actions) ---
+ci-ensure-uv:
+	@echo "🔧 Ensuring uv is installed..."
+	if command -v uv >/dev/null 2>&1; then \
+		echo "✅ uv already installed"; \
+	else \
+		echo "📦 Installing uv..."; \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	fi
+
+ci-repo-setup-python:
+	@echo "🔧 Setting up Python dev dependencies for CI..."
+	just ci-ensure-uv
+	export PATH="$HOME/.local/bin:$PATH"; uv pip install .[dev]
+
+ci-repo-tests:
+	@echo "🧪 Running repository tests with coverage (CI) ..."
+	just ci-repo-setup-python
+	export PATH="$HOME/.local/bin:$PATH"; uv run pytest --maxfail=1 --disable-warnings -q --cov=.
+
+ci-smoke:
+	@echo "🧪 Running smoke test for template generation (CI) ..."
+	just ci-ensure-uv
+	export PATH="$HOME/.local/bin:$PATH"; uv pip install -q copier
+	just test-generation
+	# Optionally run generated project tests without failing the job
+	cd ../test-output && pnpm test --if-present || true
 
 # --- Code Quality ---
 lint:

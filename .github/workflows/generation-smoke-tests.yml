@@ -12,6 +12,32 @@ on:
       - phase-2
 
 jobs:
+  repo-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install just
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y just
+
+      - name: Run repo tests (coverage)
+        run: |
+          just ci-repo-tests
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-coverage
+          path: .coverage
+
   smoke-test:
     runs-on: ubuntu-latest
     steps:
@@ -33,17 +59,20 @@ jobs:
           corepack enable
           corepack prepare pnpm@9.0.0 --activate
 
-      - name: Install copier
+      - name: Install just
         run: |
-          python -m uv install copier
+          sudo apt-get update
+          sudo apt-get install -y just
+
+      # Repository tests are run in a dedicated 'repo-tests' job to
+      # decouple template validation from generated-project builds.
 
       - name: Render template to temporary dir
         run: |
-          TARGET_DIR=$(mktemp -d)
-          echo "Rendering into $TARGET_DIR"
-          copier copy . "$TARGET_DIR" --data-file tests/fixtures/test-data.yml --force
-          echo "RENDERED_DIR=$TARGET_DIR" >> $GITHUB_ENV
-          echo "Rendered files:" && ls -la "$TARGET_DIR" | sed -n '1,120p'
+          # ci-smoke will install Copier via pip and run the template build check
+          just ci-smoke
+          # Expose the generated directory path for subsequent steps, if needed
+          echo "RENDERED_DIR=../test-output" >> $GITHUB_ENV
 
       - name: Install generated project dependencies
         run: |
