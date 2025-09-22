@@ -44,12 +44,7 @@ Thumbs.db
 tmp/
 # Python packaging artifacts
 *.egg-info/
-src/*.egg-info/
-# Python packaging artifacts
-*.egg-info/
-dist/
-build/
-
+**/*.egg-info/
 
 # Database
 *.db
