@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.{{ project_slug }}.{{ app_name }}"
+      "package": "com.{{ project_slug | lower | replace('-', '') | replace('_','') }}.{{ app_name | lower | replace('-', '') | replace('_','') }}"
     },
     "web": {
       "favicon": "./assets/favicon.png"
