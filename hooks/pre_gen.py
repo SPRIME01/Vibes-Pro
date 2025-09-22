@@ -58,6 +58,13 @@ def normalize_identifier(name: str) -> str:
     return s
 
 
+def is_valid_identifier(name: str) -> bool:
+    """Return True if name matches the Android identifier rule ^[a-z][a-z0-9_]*$"""
+    if not name:
+        return False
+    return bool(re.fullmatch(r"[a-z][a-z0-9_]*", name))
+
+
 def main() -> None:
     # Copier passes the context path via COPIER_CONFID global.
     # For now we load the rendered context JSON if available.
