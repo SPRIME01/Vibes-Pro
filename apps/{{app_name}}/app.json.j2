@@ -40,10 +40,12 @@
       ]
     ],
     {% endif %}
+    {% if eas_project_id is defined %}
     "extra": {
       "eas": {
-        "projectId": "{{ eas_project_id | default('') }}"
+        "projectId": "{{ eas_project_id }}"
       }
     }
+    {% endif %}
   }
 }
