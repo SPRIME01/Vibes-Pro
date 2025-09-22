@@ -311,28 +311,34 @@ export class AIContextManager {
     const ranked: RankedSource[] = [];
 
     for (const source of this.sources.values()) {
-      const rawContent = (await source.getContent())?.trim() ?? '';
-      if (!rawContent) {
+      try {
+        const rawContent = (await source.getContent())?.trim() ?? '';
+        if (!rawContent) {
+          continue;
+        }
+
+        const tokens = this.tokenizer.count(rawContent);
+        const relevance = this.calculateRelevance(source, analysis, rawContent);
+        const recency = this.getRecencyScore(source);
+        const success = this.getSuccessScore(source);
+        const score = this.clamp(relevance * 0.5 + recency * 0.2 + success * 0.2 + source.priority * 0.1, 0, 1);
+
+        ranked.push({
+          source,
+          score,
+          tokens,
+          content: rawContent
+        });
+
+        this.metrics.set(source.id, {
+          tokenCost: tokens,
+          score
+        });
+      } catch (error) {
+        // Skip failed sources gracefully
+        console.warn(`Failed to get content from source ${source.id}:`, error instanceof Error ? error.message : 'Unknown error');
         continue;
       }
-
-      const tokens = this.tokenizer.count(rawContent);
-      const relevance = this.calculateRelevance(source, analysis, rawContent);
-      const recency = this.getRecencyScore(source);
-      const success = this.getSuccessScore(source);
-      const score = this.clamp(relevance * 0.5 + recency * 0.2 + success * 0.2 + source.priority * 0.1, 0, 1);
-
-      ranked.push({
-        source,
-        score,
-        tokens,
-        content: rawContent
-      });
-
-      this.metrics.set(source.id, {
-        tokenCost: tokens,
-        score
-      });
     }
 
     return ranked.sort((a, b) => b.score - a.score);

@@ -40,6 +40,8 @@ Thumbs.db
 /test-output/
 /tmp/
 .monitoring/
+tmp/
+
 
 # Database
 *.db

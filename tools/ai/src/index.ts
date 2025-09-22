@@ -5,3 +5,9 @@ export type {
   ContextSource,
   ContextSourceMetrics
 } from './context-manager.js';
+
+export { PatternRecognitionEngine } from './pattern-recognition.js';
+export type {
+  LearningMetrics, PatternMatch
+} from './pattern-recognition.js';
+
