@@ -1,16 +1,5 @@
 {% if app_framework == 'remix' %}
-// HTTP Error class with detailed response information
-export class HttpError extends Error {
-  constructor(
-    public readonly status: number,
-    public readonly statusText: string,
-    public readonly body: unknown,
-    message?: string
-  ) {
-    super(message || `HTTP Error ${status}: ${statusText}`);
-    this.name = 'HttpError';
-  }
-}
+import { HttpError } from './http-error';
 
 // Note: fetch/error handling for domain clients is implemented in the
 // class-private `fetchJson` helper below to centralize logic.
@@ -18,42 +7,15 @@ export class HttpError extends Error {
 {% set domain_list = app_domains.split(',') if app_domains else ['core'] -%}
 // Domain-specific API clients
 {% for domain in domain_list -%}
-export class {{domain | replace('-', '') | title}}Api {
-  private basePath = '/api/{{domain}}';
+import { BaseApiClient } from './base-api-client';
+
+export class {{domain | replace('-', '') | title}}Api extends BaseApiClient {
+  constructor() {
+    super('/api/{{domain}}');
+  }
 
   async get<T>(path: string): Promise<T> {
     return this.fetchJson<T>(path);
-  }
-
-  private async fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
-    const url = `${this.basePath}${path}`;
-    const mergedInit: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...init?.headers,
-      },
-      ...init,
-    };
-
-    // Stringify body if it exists and is not already a string
-    if (mergedInit.body && typeof mergedInit.body !== 'string') {
-      mergedInit.body = JSON.stringify(mergedInit.body);
-    }
-
-    const res = await fetch(url, mergedInit);
-    if (!res.ok) {
-      const body = await res.text();
-      let parsedBody: unknown;
-
-      try {
-        parsedBody = JSON.parse(body);
-      } catch {
-        parsedBody = body;
-      }
-
-      throw new HttpError(res.status, res.statusText, parsedBody);
-    }
-    return (await res.json()) as T;
   }
 
   async post<T>(path: string, data: unknown): Promise<T> {

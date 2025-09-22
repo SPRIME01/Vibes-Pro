@@ -91,6 +91,20 @@ def main() -> None:
     normalized_project_slug = normalize_identifier(project_slug)
     normalized_app_name = normalize_identifier(app_name)
 
+    # Honor strict mode if requested in the copier context
+    fail_on_invalid = bool(context.get("fail_on_invalid_identifiers", False))
+
+    # If strict, error out if identifiers are invalid
+    if fail_on_invalid:
+        if not is_valid_identifier(normalized_project_slug) or not is_valid_identifier(normalized_app_name):
+            print(
+                "❌ Invalid project_slug or app_name for Android package naming."
+                " Set 'fail_on_invalid_identifiers' to false to auto-normalize."
+            )
+            print(f"project_slug: '{project_slug}' -> normalized: '{normalized_project_slug}'")
+            print(f"app_name: '{app_name}' -> normalized: '{normalized_app_name}'")
+            sys.exit(1)
+
     changed = False
     if normalized_project_slug != project_slug:
         print(f"ℹ️ Normalizing project_slug: '{project_slug}' -> '{normalized_project_slug}'")
