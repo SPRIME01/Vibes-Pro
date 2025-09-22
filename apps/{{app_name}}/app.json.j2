@@ -42,7 +42,7 @@
     {% endif %}
     "extra": {
       "eas": {
-        "projectId": "{{ project_slug }}-{{ app_name }}"
+        "projectId": "{{ eas_project_id | default('') }}"
       }
     }
   }

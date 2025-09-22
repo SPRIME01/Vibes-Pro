@@ -77,16 +77,21 @@ jobs:
         run: |
           # Initialize temporal database for AI context
           node -e "
-            const { AIContextManager } = require('./tools/ai/dist/index.js');
-            const fs = require('fs');
+            try {
+              const { AIContextManager } = require('./tools/ai/dist/index.js');
+              const fs = require('fs');
 
-            const manager = new AIContextManager({
-              maxTokens: 8000,
-              reservedTokens: 2000,
-              cacheSize: 64
-            });
+              const manager = new AIContextManager({
+                maxTokens: 8000,
+                reservedTokens: 2000,
+                cacheSize: 64
+              });
 
-            console.log('AI Context Manager initialized successfully');
+              console.log('AI Context Manager initialized successfully');
+            } catch (error) {
+              console.log('AI Context Manager not available, skipping initialization');
+              process.exit(0);
+            }
           "
 
       - name: Gather Domain Context
@@ -158,28 +163,38 @@ jobs:
           # Use the existing domain generator with AI-enhanced context
           TARGET_PATH="libs/{% raw %}${{ inputs.domain_name }}{% endraw %}"
 
-          {% if component_type == 'entity' %}
-          npx nx generate @vibes/ddd:domain-entity \
-            --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
-            --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
-            --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %} \
-            --skipDocs={% raw %}${{ inputs.include_docs == false }}{% endraw %}
-          {% elif component_type == 'value-object' %}
-          npx nx generate @vibes/ddd:value-object \
-            --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
-            --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
-            --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
-          {% elif component_type == 'service' %}
-          npx nx generate @vibes/ddd:domain-service \
-            --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
-            --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
-            --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
-          {% elif component_type == 'use-case' %}
-          npx nx generate @vibes/ddd:use-case \
-            --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
-            --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
-            --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
-          {% endif %}
+          # Select generator based on component type at runtime
+          case "{% raw %}${{ inputs.component_type }}{% endraw %}" in
+            entity)
+              pnpm exec nx generate @vibes/ddd:domain-entity \
+                --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
+                --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
+                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %} \
+                --skipDocs={% raw %}${{ inputs.include_docs == false }}{% endraw %}
+              ;;
+            value-object)
+              pnpm exec nx generate @vibes/ddd:value-object \
+                --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
+                --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
+                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
+              ;;
+            service)
+              pnpm exec nx generate @vibes/ddd:domain-service \
+                --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
+                --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
+                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
+              ;;
+            use-case)
+              pnpm exec nx generate @vibes/ddd:use-case \
+                --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
+                --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
+                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
+              ;;
+            *)
+              echo "Unknown component type: {% raw %}${{ inputs.component_type }}{% endraw %}"
+              exit 1
+              ;;
+          esac
 
       - name: Apply AI Enhancements
         env:
@@ -187,19 +202,24 @@ jobs:
         run: |
           # Apply AI-generated improvements to the base generated code
           node -e "
-            const fs = require('fs');
-            const path = require('path');
+            try {
+              const fs = require('fs');
+              const path = require('path');
 
-            // Load AI context from previous step
-            const context = JSON.parse(fs.readFileSync('ai-context.json', 'utf8'));
+              // Load AI context from previous step
+              const context = JSON.parse(fs.readFileSync('ai-context.json', 'utf8'));
 
-            console.log('Applying AI enhancements...');
-            console.log('Context relevance:', context.relevanceScore);
-            console.log('Sources used:', context.sources.map(s => s.id).join(', '));
+              console.log('Applying AI enhancements...');
+              console.log('Context relevance:', context.relevanceScore);
+              console.log('Sources used:', context.sources.map(s => s.id).join(', '));
 
-            // Here we would apply AI-specific enhancements
-            // For now, just log the enhancement process
-            console.log('AI enhancements applied successfully');
+              // Here we would apply AI-specific enhancements
+              // For now, just log the enhancement process
+              console.log('AI enhancements applied successfully');
+            } catch (error) {
+              console.log('AI enhancements not available, skipping enhancement step');
+              process.exit(0);
+            }
           "
 
       - name: Validate Generated Code

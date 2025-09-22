@@ -1,8 +1,32 @@
 {% if app_framework == 'remix' %}
+// HTTP Error class with detailed response information
+export class HttpError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly statusText: string,
+    public readonly body: unknown,
+    message?: string
+  ) {
+    super(message || `HTTP Error ${status}: ${statusText}`);
+    this.name = 'HttpError';
+  }
+}
+
 // Shared typed API client
 export async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
-  if (!res.ok) throw new Error('NetworkError');
+  if (!res.ok) {
+    const body = await res.text();
+    let parsedBody: unknown;
+
+    try {
+      parsedBody = JSON.parse(body);
+    } catch {
+      parsedBody = body;
+    }
+
+    throw new HttpError(res.status, res.statusText, parsedBody);
+  }
   return (await res.json()) as T;
 }
 
@@ -16,14 +40,42 @@ export class {{domain | replace('-', '') | title}}Api {
     return fetchJson<T>(`${this.basePath}${path}`);
   }
 
-  async post<T>(path: string, data: unknown): Promise<T> {
-    const res = await fetch(`${this.basePath}${path}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('NetworkError');
+  private async fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
+    const url = `${this.basePath}${path}`;
+    const mergedInit: RequestInit = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...init?.headers,
+      },
+      ...init,
+    };
+
+    // Stringify body if it exists and is not already a string
+    if (mergedInit.body && typeof mergedInit.body !== 'string') {
+      mergedInit.body = JSON.stringify(mergedInit.body);
+    }
+
+    const res = await fetch(url, mergedInit);
+    if (!res.ok) {
+      const body = await res.text();
+      let parsedBody: unknown;
+
+      try {
+        parsedBody = JSON.parse(body);
+      } catch {
+        parsedBody = body;
+      }
+
+      throw new HttpError(res.status, res.statusText, parsedBody);
+    }
     return (await res.json()) as T;
+  }
+
+  async post<T>(path: string, data: unknown): Promise<T> {
+    return this.fetchJson<T>(path, {
+      method: 'POST',
+      body: data,
+    });
   }
 }
 

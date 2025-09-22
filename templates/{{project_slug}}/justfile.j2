@@ -207,13 +207,25 @@ db-record-decision spec_id="" decision_point="" option="" context="" author="":
 	@python3 -c "\
 import asyncio; \
 import sys; \
+import traceback; \
 sys.path.insert(0, 'tools/temporal-db'); \
 from temporal_db.python.repository import initialize_temporal_database; \
 async def record(): \
-    repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
-    await repo.record_decision('{{ '{{spec_id}}' }}', '{{ '{{decision_point}}' }}', '{{ '{{option}}' }}', '{{ '{{context}}' }}', '{{ '{{author}}' }}' or 'user'); \
-    await repo.close(); \
-    print('✅ Decision recorded successfully'); \
+	   repo = None; \
+	   try: \
+	       repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
+	       await repo.record_decision('{{ '{{spec_id}}' }}', '{{ '{{decision_point}}' }}', '{{ '{{option}}' }}', '{{ '{{context}}' }}', '{{ '{{author}}' }}' or 'user'); \
+	       print('✅ Decision recorded successfully'); \
+	   except Exception as e: \
+	       print(f'❌ Error recording decision: {{e}}', file=sys.stderr); \
+	       traceback.print_exc(file=sys.stderr); \
+	       sys.exit(1); \
+	   finally: \
+	       if repo is not None: \
+	           try: \
+	               await repo.close(); \
+	           except Exception as e: \
+	               print(f'⚠️ Warning: Error closing repository: {{e}}', file=sys.stderr); \
 asyncio.run(record())"
 
 # Store a new architectural pattern
@@ -227,15 +239,27 @@ db-store-pattern name="" type="" definition="":
 import asyncio; \
 import sys; \
 import json; \
+import traceback; \
 sys.path.insert(0, 'tools/temporal-db'); \
 from temporal_db.python.repository import initialize_temporal_database; \
 from temporal_db.python.types import ArchitecturalPattern, PatternType; \
 async def store(): \
-    repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
-    pattern = ArchitecturalPattern.create('{{ '{{name}}' }}', PatternType.{{ '{{type}}' }}, json.loads('{{ '{{definition}}' }}' or '{}')); \
-    await repo.store_architectural_pattern(pattern); \
-    await repo.close(); \
-    print('✅ Pattern stored successfully'); \
+	   repo = None; \
+	   try: \
+	       repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
+	       pattern = ArchitecturalPattern.create('{{ '{{name}}' }}', PatternType.{{ '{{type}}' }}, json.loads('{{ '{{definition}}' }}' or '{}')); \
+	       await repo.store_architectural_pattern(pattern); \
+	       print('✅ Pattern stored successfully'); \
+	   except Exception as e: \
+	       print(f'❌ Error storing pattern: {{e}}', file=sys.stderr); \
+	       traceback.print_exc(file=sys.stderr); \
+	       sys.exit(1); \
+	   finally: \
+	       if repo is not None: \
+	           try: \
+	               await repo.close(); \
+	           except Exception as e: \
+	               print(f'⚠️ Warning: Error closing repository: {{e}}', file=sys.stderr); \
 asyncio.run(store())"
 
 # Query similar architectural patterns
@@ -244,15 +268,27 @@ db-query-patterns context="" threshold="0.5" days="90":
 	@python3 -c "\
 import asyncio; \
 import sys; \
+import traceback; \
 sys.path.insert(0, 'tools/temporal-db'); \
 from temporal_db.python.repository import initialize_temporal_database; \
 async def query(): \
-    repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
-    patterns = await repo.get_similar_patterns('{{ '{{context}}' }}', float('{{ '{{threshold}}' }}'), int('{{ '{{days}}' }}')); \
-    await repo.close(); \
-    print(f'Found {len(patterns)} matching patterns:'); \
-    for p in patterns[:5]: \
-        print(f'  • {p.pattern_name} ({p.pattern_type.value}) - Used {p.usage_frequency} times'); \
+	   repo = None; \
+	   try: \
+	       repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
+	       patterns = await repo.get_similar_patterns('{{ '{{context}}' }}', float('{{ '{{threshold}}' }}'), int('{{ '{{days}}' }}')); \
+	       print(f'Found {len(patterns)} matching patterns:'); \
+	       for p in patterns[:5]: \
+	           print(f'  • {p.pattern_name} ({p.pattern_type.value}) - Used {p.usage_frequency} times'); \
+	   except Exception as e: \
+	       print(f'❌ Error querying patterns: {{e}}', file=sys.stderr); \
+	       traceback.print_exc(file=sys.stderr); \
+	       sys.exit(1); \
+	   finally: \
+	       if repo is not None: \
+	           try: \
+	               await repo.close(); \
+	           except Exception as e: \
+	               print(f'⚠️ Warning: Error closing repository: {{e}}', file=sys.stderr); \
 asyncio.run(query())"
 
 # Analyze decision patterns over time
@@ -261,15 +297,27 @@ db-analyze-decisions days="90":
 	@python3 -c "\
 import asyncio; \
 import sys; \
+import traceback; \
 sys.path.insert(0, 'tools/temporal-db'); \
 from temporal_db.python.repository import initialize_temporal_database; \
 async def analyze(): \
-    repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
-    patterns = await repo.analyze_decision_patterns(int('{{ '{{days}}' }}')); \
-    await repo.close(); \
-    print(f'Decision patterns over last {{ '{{days}}' }} days:'); \
-    for p in patterns[:10]: \
-        print(f'  • {p.get(\"decision_point\", \"Unknown\")}: {p.get(\"total_decisions\", 0)} decisions ({p.get(\"selected_count\", 0)} high confidence)'); \
+	   repo = None; \
+	   try: \
+	       repo = await initialize_temporal_database('./temporal_db/project_specs.db'); \
+	       patterns = await repo.analyze_decision_patterns(int('{{ '{{days}}' }}')); \
+	       print(f'Decision patterns over last {{ '{{days}}' }} days:'); \
+	       for p in patterns[:10]: \
+	           print(f'  • {p.get(\"decision_point\", \"Unknown\")}: {p.get(\"total_decisions\", 0)} decisions ({p.get(\"selected_count\", 0)} high confidence)'); \
+	   except Exception as e: \
+	       print(f'❌ Error analyzing decisions: {{e}}', file=sys.stderr); \
+	       traceback.print_exc(file=sys.stderr); \
+	       sys.exit(1); \
+	   finally: \
+	       if repo is not None: \
+	           try: \
+	               await repo.close(); \
+	           except Exception as e: \
+	               print(f'⚠️ Warning: Error closing repository: {{e}}', file=sys.stderr); \
 asyncio.run(analyze())"
 
 # Clean up old entries from temporal database (optional maintenance)

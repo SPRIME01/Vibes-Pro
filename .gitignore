@@ -10,6 +10,7 @@ __pycache__/
 # Build outputs
 dist/
 build/
+*.egg-info/
 .nx/
 coverage/
 .coverage

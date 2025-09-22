@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <div style={{"{{ fontFamily: \"system-ui, sans-serif\", lineHeight: \"1.8\" }}"}}>
+    <div {% raw %}style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}{% endraw %}>
       <h1>Welcome to {{ app_name }}</h1>
       <p>This is a Remix application.</p>
       {% if include_example_page -%}

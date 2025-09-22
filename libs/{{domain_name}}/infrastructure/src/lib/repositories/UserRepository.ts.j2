@@ -86,8 +86,31 @@ export class InMemoryUserRepository implements IAdvancedUserRepository {
   }
 
   async findByEmailPattern(pattern: string): Promise<User[]> {
-    const regex = new RegExp(pattern, 'i');
-    return Array.from(this.users.values()).filter(user => regex.test(user.email));
+    if (!pattern || typeof pattern !== 'string') {
+      return [];
+    }
+
+    // Validate pattern length and content
+    if (pattern.length > 100) {
+      console.warn('Email pattern too long, truncating to 100 characters');
+      pattern = pattern.substring(0, 100);
+    }
+
+    // Escape regex metacharacters to prevent ReDoS and treat as literal search
+    const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    try {
+      // Try to create a safe regex with word boundaries for better matching
+      const regex = new RegExp(`\\b${escapedPattern}\\b`, 'i');
+      return Array.from(this.users.values()).filter(user => regex.test(user.email));
+    } catch (error) {
+      console.warn('Invalid email pattern, falling back to case-insensitive substring search:', error);
+      // Fallback to safe substring matching if regex construction fails
+      const lowerPattern = pattern.toLowerCase();
+      return Array.from(this.users.values()).filter(user =>
+        user.email.toLowerCase().includes(lowerPattern)
+      );
+    }
   }
 }
 
