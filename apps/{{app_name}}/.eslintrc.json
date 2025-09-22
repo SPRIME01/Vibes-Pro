@@ -6,7 +6,58 @@
   "ignorePatterns": [
     "!**/*"
   ],
+  "plugins": [
+    "@nx"
+  ],
   "rules": {
-    "react/no-unescaped-entities": "off"
-  }
+    "@nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allow": [],
+        "depConstraints": [
+          {
+            "sourceTag": "type:app",
+            "onlyDependOnLibsWithTags": [
+              "type:application",
+              "type:domain",
+              "type:infrastructure"
+            ]
+          },
+          {
+            "sourceTag": "type:application",
+            "onlyDependOnLibsWithTags": [
+              "type:domain",
+              "type:application"
+            ]
+          },
+          {
+            "sourceTag": "type:domain",
+            "onlyDependOnLibsWithTags": [
+              "type:domain"
+            ]
+          },
+          {
+            "sourceTag": "scope:tools",
+            "onlyDependOnLibsWithTags": [
+              "type:ai",
+              "scope:tools"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "pages/**/*.tsx",
+        "app/**/*.tsx",
+        "**/*.mdx"
+      ],
+      "rules": {
+        "react/no-unescaped-entities": "off"
+      }
+    }
+  ]
 }
