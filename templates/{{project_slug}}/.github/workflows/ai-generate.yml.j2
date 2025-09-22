@@ -226,12 +226,12 @@ jobs:
       - name: Validate Generated Code
         run: |
           # Run type checking and linting on generated code
-          npm run type-check
-          npm run lint:fix
+          pnpm run type-check
+          pnpm run lint:fix
 
           {% if include_tests %}
           # Run tests to ensure generated code works
-          npm run test -- --testPathPattern="{% raw %}${{ inputs.domain_name }}{% endraw %}/.*{% raw %}${{ inputs.component_name }}{% endraw %}"
+          pnpm run test -- --testPathPattern="{% raw %}${{ inputs.domain_name }}{% endraw %}/.*{% raw %}${{ inputs.component_name }}{% endraw %}"
           {% endif %}
 
       - name: Record AI Learning Data
