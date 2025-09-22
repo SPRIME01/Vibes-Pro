@@ -22,7 +22,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.{{ project_slug | lower | replace('-', '') | replace('_','') }}.{{ app_name | lower | replace('-', '') | replace('_','') }}"
+      {# project_slug and app_name are validated/normalized in hooks/pre_gen.py #}
+      "package": "com.{{ project_slug | lower }}.{{ app_name | lower }}"
     },
     "web": {
       "favicon": "./assets/favicon.png"
