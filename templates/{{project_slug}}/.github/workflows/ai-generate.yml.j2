@@ -118,6 +118,7 @@ jobs:
       - name: Generate Component with AI
         env:
           OPENAI_API_KEY: {% raw %}${{ secrets.OPENAI_API_KEY }}{% endraw %}
+          DOMAIN_CONTEXT: {% raw %}${{ steps.context.outputs.domain_context }}{% endraw %}
         run: |
           # Use AI to generate the component
           node -e "
@@ -139,7 +140,7 @@ jobs:
                   priority: 0.9,
                   tags: ['domain:{% raw %}${{ inputs.domain_name }}{% endraw %}', '{% raw %}${{ inputs.component_type }}{% endraw %}'],
                   async getContent() {
-                    return process.env.GITHUB_OUTPUT_CONTEXT || 'No domain context available';
+                    return process.env.DOMAIN_CONTEXT || 'No domain context available';
                   }
                 });
               }
