@@ -1,6 +1,8 @@
 language: en-US
 tone_instructions: "Be concise and focus on critical issues only"
 reviews:
+  docs:
+    enabled: true
   profile: assertive
   commit_status: true
   fail_commit_status: true
