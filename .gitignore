@@ -41,7 +41,6 @@ Thumbs.db
 /test-output/
 /tmp/
 .monitoring/
-tmp/
 # Python packaging artifacts
 *.egg-info/
 **/*.egg-info/
