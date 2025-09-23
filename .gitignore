@@ -10,6 +10,7 @@ __pycache__/
 # Build outputs
 dist/
 build/
+*.egg-info/
 .nx/
 coverage/
 .coverage
@@ -40,6 +41,10 @@ Thumbs.db
 /test-output/
 /tmp/
 .monitoring/
+tmp/
+# Python packaging artifacts
+*.egg-info/
+**/*.egg-info/
 
 # Database
 *.db
@@ -61,3 +66,6 @@ pids
 
 # Added by cargo
 /target
+
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

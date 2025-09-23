@@ -1,0 +1,359 @@
+// tools/ai/pattern-recognition.ts
+// Advanced pattern recognition for AI-enhanced development
+// Based on TS-MERGE-007 specification
+
+export interface PatternMatch {
+  pattern: string;
+  confidence: number;
+  context: string;
+  suggestions: string[];
+  lastUsed: Date;
+  successRate: number;
+}
+
+export interface LearningMetrics {
+  patternUsage: Map<string, number>;
+  successfulGenerations: Map<string, number>;
+  contextEffectiveness: Map<string, number>;
+  tokenOptimization: {
+    averageTokens: number;
+    optimalRange: [number, number];
+    efficiency: number;
+  };
+}
+
+export class PatternRecognitionEngine {
+  private patterns = new Map<string, PatternMatch>();
+  private learningHistory: Array<{
+    timestamp: Date;
+    pattern: string;
+    success: boolean;
+    tokenUsage: number;
+    context: string;
+  }> = [];
+
+  constructor(private readonly learningThreshold = 0.7) {}
+
+  /**
+   * Analyze code/requirements and identify matching patterns
+   */
+  analyzePatterns(input: {
+    code?: string;
+    requirements: string;
+    domain: string;
+    componentType: string;
+  }): PatternMatch[] {
+    const matches: PatternMatch[] = [];
+
+    // Entity pattern recognition
+    if (this.detectEntityPattern(input)) {
+      matches.push({
+        pattern: 'domain-entity',
+        confidence: this.calculateConfidence(input, 'domain-entity'),
+        context: `${input.domain} domain entity`,
+        suggestions: [
+          'Include domain events for state changes',
+          'Enforce invariants in constructor',
+          'Use value objects for complex properties'
+        ],
+        lastUsed: new Date(),
+        successRate: this.getPatternSuccessRate('domain-entity')
+      });
+    }
+
+    // Value object pattern recognition
+    if (this.detectValueObjectPattern(input)) {
+      matches.push({
+        pattern: 'value-object',
+        confidence: this.calculateConfidence(input, 'value-object'),
+        context: `${input.domain} value object`,
+        suggestions: [
+          'Ensure immutability',
+          'Implement value-based equality',
+          'Add validation in constructor'
+        ],
+        lastUsed: new Date(),
+        successRate: this.getPatternSuccessRate('value-object')
+      });
+    }
+
+    // Hexagonal architecture pattern recognition
+    if (this.detectHexagonalPattern(input)) {
+      matches.push({
+        pattern: 'hexagonal-architecture',
+        confidence: this.calculateConfidence(input, 'hexagonal-architecture'),
+        context: `${input.domain} hexagonal component`,
+        suggestions: [
+          'Separate domain from infrastructure',
+          'Use ports and adapters',
+          'Keep domain pure'
+        ],
+        lastUsed: new Date(),
+        successRate: this.getPatternSuccessRate('hexagonal-architecture')
+      });
+    }
+
+    // Use case pattern recognition
+    if (this.detectUseCasePattern(input)) {
+      matches.push({
+        pattern: 'use-case',
+        confidence: this.calculateConfidence(input, 'use-case'),
+        context: `${input.domain} use case`,
+        suggestions: [
+          'Single responsibility principle',
+          'Orchestrate domain operations',
+          'Handle cross-cutting concerns'
+        ],
+        lastUsed: new Date(),
+        successRate: this.getPatternSuccessRate('use-case')
+      });
+    }
+
+    return matches.sort((a, b) => b.confidence - a.confidence);
+  }
+
+  /**
+   * Learn from successful/failed generations
+   */
+  recordLearning(outcome: {
+    pattern: string;
+    success: boolean;
+    tokenUsage: number;
+    context: string;
+    feedback?: string;
+  }): void {
+    this.learningHistory.push({
+      timestamp: new Date(),
+      pattern: outcome.pattern,
+      success: outcome.success,
+      tokenUsage: outcome.tokenUsage,
+      context: outcome.context
+    });
+
+    // Update pattern success rates
+    this.updatePatternMetrics(outcome.pattern, outcome.success);
+
+    // Trim history to prevent memory growth
+    if (this.learningHistory.length > 1000) {
+      this.learningHistory = this.learningHistory.slice(-1000);
+    }
+  }
+
+  /**
+   * Get learning metrics for optimization
+   */
+  getLearningMetrics(): LearningMetrics {
+    const patternUsage = new Map<string, number>();
+    const successfulGenerations = new Map<string, number>();
+    const contextEffectiveness = new Map<string, number>();
+
+    let totalTokens = 0;
+    let tokenCount = 0;
+
+    for (const entry of this.learningHistory) {
+      // Pattern usage tracking
+      patternUsage.set(entry.pattern, (patternUsage.get(entry.pattern) ?? 0) + 1);
+
+      // Success tracking
+      if (entry.success) {
+        successfulGenerations.set(
+          entry.pattern,
+          (successfulGenerations.get(entry.pattern) ?? 0) + 1
+        );
+      }
+
+      // Context effectiveness (success rate by context)
+      const contextKey = `${entry.pattern}:${entry.context}`;
+      if (entry.success) {
+        contextEffectiveness.set(
+          contextKey,
+          (contextEffectiveness.get(contextKey) ?? 0) + 1
+        );
+      }
+
+      // Token optimization
+      totalTokens += entry.tokenUsage;
+      tokenCount++;
+    }
+
+    const averageTokens = tokenCount > 0 ? totalTokens / tokenCount : 0;
+    const sortedTokens = this.learningHistory
+      .map(h => h.tokenUsage)
+      .sort((a, b) => a - b);
+
+    const p25 = sortedTokens[Math.floor(sortedTokens.length * 0.25)] ?? 0;
+    const p75 = sortedTokens[Math.floor(sortedTokens.length * 0.75)] ?? 0;
+
+    return {
+      patternUsage,
+      successfulGenerations,
+      contextEffectiveness,
+      tokenOptimization: {
+        averageTokens,
+        optimalRange: [p25, p75],
+        efficiency: this.calculateTokenEfficiency()
+      }
+    };
+  }
+
+  /**
+   * Suggest optimizations based on learning
+   */
+  suggestOptimizations(): string[] {
+    const metrics = this.getLearningMetrics();
+    const suggestions: string[] = [];
+
+    // Token optimization suggestions
+    if (metrics.tokenOptimization.efficiency < 0.7) {
+      suggestions.push('Consider reducing context size for better token efficiency');
+    }
+
+    // Pattern success rate suggestions
+    for (const [pattern, usage] of metrics.patternUsage) {
+      const successes = metrics.successfulGenerations.get(pattern) ?? 0;
+      const successRate = usage > 0 ? successes / usage : 0;
+
+      if (successRate < this.learningThreshold && usage > 5) {
+        suggestions.push(`Pattern "${pattern}" has low success rate (${(successRate * 100).toFixed(1)}%) - consider reviewing templates`);
+      }
+    }
+
+    // Context effectiveness suggestions
+    const lowEffectiveContexts = Array.from(metrics.contextEffectiveness.entries())
+      .filter(([, score]) => score < 3)
+      .map(([context]) => context);
+
+    if (lowEffectiveContexts.length > 0) {
+      suggestions.push(`Consider improving context for: ${lowEffectiveContexts.slice(0, 3).join(', ')}`);
+    }
+
+    return suggestions;
+  }
+
+  private detectEntityPattern(input: {
+    code?: string;
+    requirements: string;
+    componentType: string;
+  }): boolean {
+    const entityKeywords = ['entity', 'aggregate', 'id', 'identity', 'business rule', 'invariant'];
+    const requirements = input.requirements.toLowerCase();
+
+    return input.componentType === 'entity' ||
+           entityKeywords.some(keyword => requirements.includes(keyword));
+  }
+
+  private detectValueObjectPattern(input: {
+    code?: string;
+    requirements: string;
+    componentType: string;
+  }): boolean {
+    const valueObjectKeywords = ['value', 'immutable', 'primitive', 'measurement', 'amount'];
+    const requirements = input.requirements.toLowerCase();
+
+    return input.componentType === 'value-object' ||
+           valueObjectKeywords.some(keyword => requirements.includes(keyword));
+  }
+
+  private detectHexagonalPattern(input: {
+    code?: string;
+    requirements: string;
+    componentType: string;
+  }): boolean {
+    const hexagonalKeywords = ['port', 'adapter', 'interface', 'external', 'infrastructure'];
+    const requirements = input.requirements.toLowerCase();
+
+    return hexagonalKeywords.some(keyword => requirements.includes(keyword));
+  }
+
+  private detectUseCasePattern(input: {
+    code?: string;
+    requirements: string;
+    componentType: string;
+  }): boolean {
+    const useCaseKeywords = ['use case', 'workflow', 'process', 'orchestrate', 'coordinate'];
+    const requirements = input.requirements.toLowerCase();
+
+    return input.componentType === 'use-case' ||
+           useCaseKeywords.some(keyword => requirements.includes(keyword));
+  }
+
+  private calculateConfidence(input: {
+    code?: string;
+    requirements: string;
+    componentType: string;
+  }, pattern: string): number {
+    let confidence = 0.5; // Base confidence
+
+    // Boost confidence if component type matches pattern
+    if (input.componentType === pattern || input.componentType === pattern.replace('-', '')) {
+      confidence += 0.3;
+    }
+
+    // Boost confidence based on historical success
+    const successRate = this.getPatternSuccessRate(pattern);
+    confidence += successRate * 0.2;
+
+    // Boost confidence based on keyword density
+    const keywordDensity = this.calculateKeywordDensity(input.requirements, pattern);
+    confidence += keywordDensity * 0.2;
+
+    return Math.min(1.0, confidence);
+  }
+
+  private calculateKeywordDensity(text: string, pattern: string): number {
+    const keywords: Record<string, string[]> = {
+      'domain-entity': ['entity', 'business', 'rule', 'invariant', 'aggregate'],
+      'value-object': ['value', 'immutable', 'primitive', 'measurement'],
+      'hexagonal-architecture': ['port', 'adapter', 'interface', 'external'],
+      'use-case': ['workflow', 'process', 'orchestrate', 'coordinate']
+    };
+
+    const patternKeywords = keywords[pattern] ?? [];
+    const words = text.toLowerCase().split(/\s+/);
+    const matches = words.filter(word => patternKeywords.includes(word)).length;
+
+    return words.length > 0 ? matches / words.length : 0;
+  }
+
+  private getPatternSuccessRate(pattern: string): number {
+    const patternHistory = this.learningHistory.filter(h => h.pattern === pattern);
+    if (patternHistory.length === 0) return 0.5; // Default for new patterns
+
+    const successes = patternHistory.filter(h => h.success).length;
+    return successes / patternHistory.length;
+  }
+
+  private updatePatternMetrics(pattern: string, success: boolean): void {
+    // Update in-memory pattern tracking
+    const existing = this.patterns.get(pattern);
+    if (existing) {
+      // Update success rate using exponential moving average
+      existing.successRate = existing.successRate * 0.9 + (success ? 1 : 0) * 0.1;
+      existing.lastUsed = new Date();
+    } else {
+      this.patterns.set(pattern, {
+        pattern,
+        confidence: success ? 0.8 : 0.3,
+        context: '',
+        suggestions: [],
+        lastUsed: new Date(),
+        successRate: success ? 1.0 : 0.0
+      });
+    }
+  }
+
+  private calculateTokenEfficiency(): number {
+    if (this.learningHistory.length === 0) return 0.5;
+
+    const recentHistory = this.learningHistory.slice(-100); // Last 100 generations
+    const successfulGenerations = recentHistory.filter(h => h.success);
+
+    if (successfulGenerations.length === 0) return 0;
+
+    const averageSuccessTokens = successfulGenerations.reduce((sum, h) => sum + h.tokenUsage, 0) / successfulGenerations.length;
+    const averageAllTokens = recentHistory.reduce((sum, h) => sum + h.tokenUsage, 0) / recentHistory.length;
+
+    // Efficiency is higher when successful generations use fewer tokens
+    return Math.max(0, 1 - (averageSuccessTokens / (averageAllTokens * 1.5)));
+  }
+}

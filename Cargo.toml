@@ -1,7 +1,21 @@
 [package]
 name = "VibesPro"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-tsink = "0.3.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1.0"
+md5 = "0.7"
+tokio = { version = "1.0", features = ["full"] }
+sled = "0.34"
+
+[dev-dependencies]
+tempfile = "3.0"
+
+[lib]
+name = "temporal_db"
+path = "temporal_db/lib.rs"

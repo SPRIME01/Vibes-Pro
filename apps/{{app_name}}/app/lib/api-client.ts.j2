@@ -1,0 +1,39 @@
+{% if app_framework == 'remix' %}
+import { HttpError } from './http-error';
+
+// Note: fetch/error handling for domain clients is implemented in the
+// class-private `fetchJson` helper below to centralize logic.
+
+{% set domain_list = app_domains.split(',') if app_domains else ['core'] -%}
+// Domain-specific API clients
+{% for domain in domain_list -%}
+import { BaseApiClient } from './base-api-client';
+
+export class {{domain | replace('-', '') | title}}Api extends BaseApiClient {
+  constructor() {
+    super('/api/{{domain}}');
+  }
+
+  async get<T>(path: string): Promise<T> {
+    return this.fetchJson<T>(path);
+  }
+
+  async post<T>(path: string, data: unknown): Promise<T> {
+    return this.fetchJson<T>(path, {
+      method: 'POST',
+      body: data,
+    });
+  }
+}
+
+// Export domain instance
+export const {{domain | replace('-', '') | lower}}Api = new {{domain | replace('-', '') | title}}Api();
+
+{% endfor -%}
+// <hex-web-client-exports>
+// DomainName interface for type safety
+export interface DomainName {
+  name: string;
+  slug: string;
+}
+{% endif %}

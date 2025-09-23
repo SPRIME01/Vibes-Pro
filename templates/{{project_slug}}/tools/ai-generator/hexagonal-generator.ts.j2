@@ -1,0 +1,558 @@
+// tools/ai-generator/src/hexagonal-generator.ts
+// Implementation based on TS-MERGE-007 specification
+import { AIContextManager, ContextSource } from '../ai/context-manager.js';
+
+interface GenerationRequest {
+  component: 'entity' | 'value-object' | 'service' | 'port' | 'adapter' | 'use-case';
+  domain: string;
+  requirements: string;
+  existingContext?: string[];
+}
+
+interface GenerationResult {
+  code: string;
+  tests: string;
+  documentation: string;
+  patterns: string[];
+  suggestions: string[];
+}
+
+interface ArchitecturalPatterns {
+  name: string;
+  description: string;
+  template: string;
+  applicableComponents: string[];
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  suggestions: string[];
+}
+
+export class HexagonalAIGenerator {
+  private contextManager: AIContextManager;
+  private patterns: Map<string, ArchitecturalPatterns[]>;
+
+  constructor(config?: {
+    maxTokens?: number;
+    reservedTokens?: number;
+  }) {
+    this.contextManager = new AIContextManager({
+      maxTokens: config?.maxTokens ?? 8000,
+      reservedTokens: config?.reservedTokens ?? 2000,
+      cacheSize: 64
+    });
+
+    this.patterns = this.initializePatterns();
+  }
+
+  async generateComponent(request: GenerationRequest): Promise<GenerationResult> {
+    try {
+      // 1. Gather relevant context
+      const context = await this.gatherContext(request);
+
+      // 2. Select appropriate patterns
+      const relevantPatterns = this.getRelevantPatterns(
+        request.component,
+        request.domain
+      );
+
+      // 3. Compose generation prompt
+      const prompt = this.composePrompt(request, context, relevantPatterns);
+
+      // 4. Generate code using patterns and context
+      const generatedCode = await this.generateCodeFromTemplate(request, relevantPatterns, context);
+
+      // 5. Parse and validate generated code
+      const parsedResult = this.parseGeneratedCode(generatedCode);
+
+      // 6. Apply architectural validation
+      const validation = this.validateArchitecture(parsedResult, request);
+
+      if (!validation.isValid) {
+        // Apply fixes based on validation feedback
+        const fixedCode = this.applyValidationFixes(parsedResult, validation.errors);
+        parsedResult.code = fixedCode;
+      }
+
+      // 7. Generate accompanying tests
+      const tests = this.generateTests(parsedResult, request);
+
+      // 8. Generate documentation
+      const documentation = this.generateDocumentation(parsedResult, request);
+
+      return {
+        code: parsedResult.code,
+        tests,
+        documentation,
+        patterns: relevantPatterns.map(p => p.name),
+        suggestions: validation.suggestions
+      };
+    } catch (error) {
+      throw new Error(`Failed to generate component: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  registerContextSource(source: ContextSource): void {
+    this.contextManager.registerSource(source);
+  }
+
+  registerContextSources(sources: ContextSource[]): void {
+    this.contextManager.registerSources(sources);
+  }
+
+  private async gatherContext(request: GenerationRequest): Promise<string> {
+    // Create a task description for context gathering
+    const task = `Generate ${request.component} for ${request.domain} domain: ${request.requirements}`;
+
+    // Get optimal context from the context manager
+    const contextResult = await this.contextManager.getOptimalContext(task);
+
+    return contextResult.content;
+  }
+
+  private getRelevantPatterns(
+    component: string,
+    domain: string
+  ): ArchitecturalPatterns[] {
+    const componentPatterns = this.patterns.get(component) ?? [];
+
+    // Filter patterns based on domain and component type
+    return componentPatterns.filter(pattern =>
+      pattern.applicableComponents.includes(component)
+    );
+  }
+
+  private composePrompt(
+    request: GenerationRequest,
+    context: string,
+    patterns: ArchitecturalPatterns[]
+  ): string {
+    const systemPrompt = this.getSystemPrompt(request.component);
+    const patternDescriptions = patterns.map(p =>
+      `- ${p.name}: ${p.description}`
+    ).join('\n');
+
+    return `
+${systemPrompt}
+
+## Context Information
+${context}
+
+## Applicable Patterns
+${patternDescriptions}
+
+## Generation Request
+Component Type: ${request.component}
+Domain: ${request.domain}
+Requirements: ${request.requirements}
+
+Please generate the ${request.component} following the hexagonal architecture principles and DDD patterns.
+Ensure the code is production-ready, type-safe, and follows the established patterns in the context.
+`;
+  }
+
+  private async generateCodeFromTemplate(
+    request: GenerationRequest,
+    patterns: ArchitecturalPatterns[],
+    context: string
+  ): Promise<string> {
+    // In a real implementation, this would call an AI service
+    // For now, we'll use template-based generation as a fallback
+
+    const primaryPattern = patterns[0];
+    if (!primaryPattern) {
+      throw new Error(`No patterns available for component type: ${request.component}`);
+    }
+
+    // Template-based generation using the primary pattern
+    let template = primaryPattern.template;
+
+    // Replace template variables
+    template = template.replace(/{{componentName}}/g, this.toPascalCase(request.component));
+    template = template.replace(/{{domain}}/g, this.toPascalCase(request.domain));
+    template = template.replace(/{{requirements}}/g, request.requirements);
+
+    return template;
+  }
+
+  private parseGeneratedCode(generatedCode: string): { code: string; imports: string[]; exports: string[] } {
+    // Simple parsing for now - in production this would use TypeScript compiler API
+    const importRegex = /import\s+.*?from\s+['"][^'"]+['"]/g;
+    const exportRegex = /export\s+(?:class|interface|function|const)\s+(\w+)/g;
+
+    const imports = generatedCode.match(importRegex) ?? [];
+    const exports: string[] = [];
+
+    let match;
+    while ((match = exportRegex.exec(generatedCode)) !== null) {
+      exports.push(match[1]);
+    }
+
+    return {
+      code: generatedCode,
+      imports,
+      exports
+    };
+  }
+
+  private validateArchitecture(
+    parsedResult: { code: string; imports: string[]; exports: string[] },
+    request: GenerationRequest
+  ): ValidationResult {
+    const errors: string[] = [];
+    const suggestions: string[] = [];
+
+    // Basic architectural validation
+    if (request.component === 'entity' && !parsedResult.code.includes('constructor')) {
+      errors.push('Entity must have a constructor');
+    }
+
+    if (request.component === 'value-object' && !parsedResult.code.includes('readonly')) {
+      suggestions.push('Consider making value object properties readonly for immutability');
+    }
+
+    if (request.component === 'port' && !parsedResult.code.includes('interface')) {
+      errors.push('Port must be defined as an interface');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      suggestions
+    };
+  }
+
+  private applyValidationFixes(
+    parsedResult: { code: string; imports: string[]; exports: string[] },
+    errors: string[]
+  ): string {
+    let fixedCode = parsedResult.code;
+
+    // Apply basic fixes
+    for (const error of errors) {
+      if (error.includes('constructor')) {
+        // Add a basic constructor if missing
+        const classMatch = fixedCode.match(/export class (\w+)/);
+        if (classMatch) {
+          const className = classMatch[1];
+          const constructorCode = `
+  constructor() {
+    // TODO: Implement constructor
+  }`;
+          fixedCode = fixedCode.replace(
+            /export class \w+ {/,
+            `export class ${className} {${constructorCode}`
+          );
+        }
+      }
+    }
+
+    return fixedCode;
+  }
+
+  private generateTests(
+    parsedResult: { code: string; imports: string[]; exports: string[] },
+    request: GenerationRequest
+  ): string {
+    const testTemplate = `
+import { describe, expect, it } from 'vitest';
+import { ${parsedResult.exports.join(', ')} } from './${request.component}';
+
+describe('${this.toPascalCase(request.component)}', () => {
+  it('should be created successfully', () => {
+    // TODO: Implement test
+    expect(true).toBe(true);
+  });
+
+  it('should follow domain invariants', () => {
+    // TODO: Test domain rules and invariants
+    expect(true).toBe(true);
+  });
+});
+`;
+
+    return testTemplate.trim();
+  }
+
+  private generateDocumentation(
+    parsedResult: { code: string; imports: string[]; exports: string[] },
+    request: GenerationRequest
+  ): string {
+    const docTemplate = `
+# ${this.toPascalCase(request.component)} - ${this.toPascalCase(request.domain)} Domain
+
+## Overview
+${request.requirements}
+
+## Architecture
+This ${request.component} follows hexagonal architecture principles and is part of the ${request.domain} domain.
+
+## Usage
+\`\`\`typescript
+import { ${parsedResult.exports.join(', ')} } from './${request.component}';
+
+// TODO: Add usage examples
+\`\`\`
+
+## Domain Rules
+- TODO: Document domain-specific business rules
+- TODO: Document invariants and constraints
+
+## Dependencies
+${parsedResult.imports.map(imp => `- ${imp}`).join('\n')}
+`;
+
+    return docTemplate.trim();
+  }
+
+  private getSystemPrompt(component: string): string {
+    const basePrompt = `
+You are an expert software architect specializing in hexagonal architecture and domain-driven design.
+Your task is to generate high-quality, production-ready code that follows these principles:
+
+1. Hexagonal Architecture: Clear separation between domain, application, and infrastructure layers
+2. Domain-Driven Design: Rich domain models with explicit business rules
+3. SOLID Principles: Especially single responsibility and dependency inversion
+4. Type Safety: Full type annotations and strict typing
+5. Testability: Code that is easy to unit test with clear dependencies
+
+Generate code that is:
+- Clean and readable
+- Well-documented with clear intent
+- Following established patterns in the codebase
+- Compliant with linting rules
+- Production-ready quality
+`;
+
+    const componentSpecific: Record<string, string> = {
+      'entity': `
+Focus on creating a domain entity with:
+- Rich business behavior, not just data containers
+- Invariant enforcement in constructors and methods
+- Domain events for state changes
+- Immutable value objects where appropriate
+`,
+      'value-object': `
+Focus on creating a value object with:
+- Immutability
+- Value-based equality
+- Validation in constructor
+- No identity, only values matter
+`,
+      'service': `
+Focus on creating a domain service with:
+- Stateless operations
+- Domain-focused behavior that doesn't belong in entities
+- Clear, intention-revealing method names
+- Dependency injection via constructor
+`,
+      'port': `
+Focus on creating a port interface with:
+- Clear contract definition
+- Technology-agnostic abstractions
+- Input/output models using domain types
+- Comprehensive method documentation
+`,
+      'adapter': `
+Focus on creating an adapter implementation with:
+- Implementation of the corresponding port interface
+- Technology-specific details encapsulated
+- Error handling and logging
+- Connection management and resource cleanup
+`,
+      'use-case': `
+Focus on creating a use case with:
+- Single responsibility focused on one business goal
+- Orchestration of domain objects and services
+- Clear input/output contracts
+- Proper error handling and validation
+`
+    };
+
+    return basePrompt + (componentSpecific[component] || '');
+  }
+
+  private initializePatterns(): Map<string, ArchitecturalPatterns[]> {
+    const patterns = new Map<string, ArchitecturalPatterns[]>();
+
+    // Entity patterns
+    patterns.set('entity', [
+      {
+        name: 'Domain Entity',
+        description: 'Rich domain entity with business behavior and invariants',
+        applicableComponents: ['entity'],
+        template: `
+export class {{componentName}} {
+  constructor(
+    private readonly id: {{componentName}}Id,
+    // TODO: Add domain properties
+  ) {
+    // TODO: Enforce invariants
+  }
+
+  // TODO: Add business methods
+}
+
+export class {{componentName}}Id {
+  constructor(private readonly value: string) {
+    if (!value) {
+      throw new Error('{{componentName}}Id cannot be empty');
+    }
+  }
+
+  getValue(): string {
+    return this.value;
+  }
+
+  equals(other: {{componentName}}Id): boolean {
+    return this.value === other.value;
+  }
+}
+`
+      }
+    ]);
+
+    // Value Object patterns
+    patterns.set('value-object', [
+      {
+        name: 'Immutable Value Object',
+        description: 'Immutable value object with value-based equality',
+        applicableComponents: ['value-object'],
+        template: `
+export class {{componentName}} {
+  constructor(
+    private readonly value: string // TODO: Adjust type as needed
+  ) {
+    // TODO: Add validation
+    if (!value) {
+      throw new Error('{{componentName}} cannot be empty');
+    }
+  }
+
+  getValue(): string {
+    return this.value;
+  }
+
+  equals(other: {{componentName}}): boolean {
+    return this.value === other.value;
+  }
+
+  toString(): string {
+    return this.value;
+  }
+}
+`
+      }
+    ]);
+
+    // Service patterns
+    patterns.set('service', [
+      {
+        name: 'Domain Service',
+        description: 'Stateless domain service for complex business operations',
+        applicableComponents: ['service'],
+        template: `
+export class {{componentName}}Service {
+  constructor(
+    // TODO: Inject required dependencies
+  ) {}
+
+  // TODO: Add domain service methods
+  async performOperation(/* parameters */): Promise<void> {
+    // TODO: Implement business logic
+  }
+}
+`
+      }
+    ]);
+
+    // Port patterns
+    patterns.set('port', [
+      {
+        name: 'Repository Port',
+        description: 'Repository interface for data persistence abstraction',
+        applicableComponents: ['port'],
+        template: `
+export interface {{componentName}}Repository {
+  save(entity: {{domain}}Entity): Promise<void>;
+  findById(id: {{domain}}EntityId): Promise<{{domain}}Entity | null>;
+  // TODO: Add more repository methods as needed
+}
+`
+      }
+    ]);
+
+    // Adapter patterns
+    patterns.set('adapter', [
+      {
+        name: 'Repository Adapter',
+        description: 'Concrete implementation of repository port',
+        applicableComponents: ['adapter'],
+        template: `
+import { {{componentName}}Repository } from '../ports/{{componentName}}Repository';
+
+export class {{componentName}}Adapter implements {{componentName}}Repository {
+  constructor(
+    // TODO: Inject database or external service dependencies
+  ) {}
+
+  async save(entity: {{domain}}Entity): Promise<void> {
+    // TODO: Implement persistence logic
+  }
+
+  async findById(id: {{domain}}EntityId): Promise<{{domain}}Entity | null> {
+    // TODO: Implement retrieval logic
+    return null;
+  }
+}
+`
+      }
+    ]);
+
+    // Use Case patterns
+    patterns.set('use-case', [
+      {
+        name: 'Application Use Case',
+        description: 'Application service that orchestrates domain operations',
+        applicableComponents: ['use-case'],
+        template: `
+export interface {{componentName}}Command {
+  // TODO: Define input parameters
+}
+
+export interface {{componentName}}Result {
+  // TODO: Define output parameters
+}
+
+export class {{componentName}}UseCase {
+  constructor(
+    // TODO: Inject required repositories and services
+  ) {}
+
+  async execute(command: {{componentName}}Command): Promise<{{componentName}}Result> {
+    // TODO: Implement use case logic
+    // 1. Validate input
+    // 2. Load domain objects
+    // 3. Execute business logic
+    // 4. Persist changes
+    // 5. Return result
+
+    throw new Error('Not implemented');
+  }
+}
+`
+      }
+    ]);
+
+    return patterns;
+  }
+
+  private toPascalCase(str: string): string {
+    return str
+      .split(/[-_\s]+/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('');
+  }
+}

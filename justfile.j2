@@ -1,0 +1,103 @@
+set shell := ["bash", "-uc"]
+
+default:
+	@just --list
+
+# --- Environment Setup ---
+setup: setup-node setup-python
+	@echo "✅ Development environment ready"
+
+setup-node:
+	@echo "🔧 Preparing Node.js toolchain..."
+	corepack enable
+	pnpm install
+
+setup-python:
+	@echo "🐍 Syncing Python environment..."
+	uv sync --dev
+
+# --- Build Orchestration ---
+build TARGET="": (_detect_build_strategy TARGET)
+
+_detect_build_strategy TARGET:
+	#!/usr/bin/env bash
+	if [ -z "{{ '{{TARGET}}' }}" ]; then
+		if [ -f "nx.json" ]; then
+			echo "🏗️  Building with Nx..."
+			just build-nx
+		else
+			echo "🏗️  Building directly..."
+			just build-direct
+		fi
+	else
+		just build-target "{{ '{{TARGET}}' }}"
+	fi
+
+build-direct:
+	uv run python -m build
+	pnpm run build
+
+build-nx:
+	nx run-many --target=build --all --parallel=3
+
+build-target TARGET:
+	nx run {{ '{{TARGET}}' }}:build
+
+# --- Test Orchestration ---
+test TARGET="": (_detect_test_strategy TARGET)
+
+_detect_test_strategy TARGET:
+	#!/usr/bin/env bash
+	if [ -z "{{ '{{TARGET}}' }}" ]; then
+		if [ -f "nx.json" ]; then
+			just test-nx
+		else
+			just test-direct
+		fi
+	else
+		just test-target "{{ '{{TARGET}}' }}"
+	fi
+
+test-direct:
+	uv run pytest
+	pnpm test
+
+test-nx:
+	nx run-many --target=test --all --parallel=3
+
+test-target TARGET:
+	nx run {{ '{{TARGET}}' }}:test
+
+# --- Code Quality ---
+lint:
+	pnpm run lint
+	uv run mypy .
+
+format:
+	pnpm run format
+	uv run black .
+	uv run isort .
+
+# --- Maintenance ---
+clean:
+	nx reset
+	rm -rf node_modules/.cache
+	rm -rf .nx
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+
+clean-all: clean
+	@echo "🧹 Deep cleaning dependencies..."
+	rm -rf node_modules
+	rm -rf .venv
+	rm -rf pnpm-lock.yaml
+	rm -rf uv.lock
+
+# --- Developer Experience ---
+dev:
+	nx run-many --target=serve --all --parallel=5
+
+spec-matrix:
+	pnpm spec:matrix
+
+prompt-lint:
+	pnpm prompt:lint

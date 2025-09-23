@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "{{ project_name }}",
+    "slug": "{{ app_name }}",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      {# project_slug and app_name are validated/normalized in hooks/pre_gen.py #}
+      "package": "com.{{ project_slug | lower }}.{{ app_name | lower }}"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    {% if include_supabase %}
+    "plugins": [
+      "expo-location",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    {% endif %}
+    {% if eas_project_id is defined %}
+    "extra": {
+      "eas": {
+        "projectId": "{{ eas_project_id }}"
+      }
+    }
+    {% endif %}
+  }
+}
