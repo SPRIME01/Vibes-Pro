@@ -125,9 +125,16 @@ jobs:
         run: |
           # Use AI to generate the component
           node -e "
-            const { AIContextManager } = require('./tools/ai/dist/index.js');
             const fs = require('fs');
             const path = require('path');
+            let AIContextManager;
+            try {
+              ({ AIContextManager } = require('./tools/ai/dist/index.js'));
+            } catch (e) {
+              console.warn('AI tools not found; writing minimal ai-context.json and skipping generation:', e?.message || e);
+              fs.writeFileSync('ai-context.json', JSON.stringify({ tokenCount: 0, relevanceScore: 0, sources: [] }, null, 2));
+              process.exit(0);
+            }
 
             async function generateComponent() {
               const manager = new AIContextManager({
@@ -159,9 +166,8 @@ jobs:
               fs.writeFileSync('ai-context.json', JSON.stringify(context, null, 2));
             }
 
-            generateComponent().catch(console.error);
+            generateComponent().catch((e) => { console.error(e); process.exit(1); });
           "
-
       - name: Generate Code using Nx Generator
         run: |
           # Use the existing domain generator with AI-enhanced context
