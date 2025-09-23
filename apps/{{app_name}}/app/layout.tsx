@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import '../styles/globals.css'
 
 export const metadata: Metadata = {
-  title: '{{app_name}}',
+  title: '{{ app_name }}',
   description: 'Generated application using VibesPro',
 }
 
