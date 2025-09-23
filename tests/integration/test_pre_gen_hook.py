@@ -3,12 +3,12 @@ import subprocess
 import sys
 from pathlib import Path
 import tempfile
-from typing import Mapping, Any
+from typing import Mapping
 
 HOOK_PATH = Path(__file__).resolve().parents[2] / 'hooks' / 'pre_gen.py'
 
 
-def run_hook_with_answers(answers: Mapping[str, Any]) -> tuple[int, str]:
+def run_hook_with_answers(answers: Mapping[str, object]) -> tuple[int, str]:
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
         answers_path = td_path / 'copier_answers.json'
@@ -20,7 +20,7 @@ def run_hook_with_answers(answers: Mapping[str, Any]) -> tuple[int, str]:
 
 
 def test_normalize_behavior():
-    answers = {
+    answers: dict[str, object] = {
         'project_slug': 'My-Project',
         'app_name': '123App',
         'author_email': 'dev@example.com',
@@ -40,7 +40,7 @@ def test_normalize_behavior():
 
 
 def test_strict_fail_behavior():
-    answers = {
+    answers: dict[str, object] = {
         'project_slug': 'My-Project',
         'app_name': '123App',
         'author_email': 'dev@example.com',
