@@ -54,12 +54,11 @@ jobs:
           token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'pnpm'
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
