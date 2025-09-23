@@ -8,7 +8,7 @@ from typing import Mapping
 HOOK_PATH = Path(__file__).resolve().parents[2] / 'hooks' / 'pre_gen.py'
 
 
-def run_hook_with_answers(answers: Mapping[str, object]) -> tuple[int, str]:
+def run_hook_with_answers(answers: Mapping[str, Any]) -> tuple[int, str, dict[str, Any]]:
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
         answers_path = td_path / 'copier_answers.json'
@@ -16,7 +16,8 @@ def run_hook_with_answers(answers: Mapping[str, object]) -> tuple[int, str]:
 
         # Run the hook with cwd set to the temp dir
         proc = subprocess.run([sys.executable, str(HOOK_PATH)], cwd=td_path, capture_output=True, text=True)
-        return proc.returncode, proc.stdout + proc.stderr
+        normalized: dict[str, Any] = json.loads(answers_path.read_text())
+        return proc.returncode, proc.stdout + proc.stderr, normalized
 
 
 def test_normalize_behavior():
