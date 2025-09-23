@@ -186,19 +186,22 @@ jobs:
               pnpm exec nx generate @vibes/ddd:value-object \
                 --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
                 --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
-                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
+                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %} \
+                --skipDocs={% raw %}${{ inputs.include_docs == false }}{% endraw %}
               ;;
             service)
               pnpm exec nx generate @vibes/ddd:domain-service \
                 --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
                 --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
-                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
+                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %} \
+                --skipDocs={% raw %}${{ inputs.include_docs == false }}{% endraw %}
               ;;
             use-case)
               pnpm exec nx generate @vibes/ddd:use-case \
                 --name="{% raw %}${{ inputs.component_name }}{% endraw %}" \
                 --domain="{% raw %}${{ inputs.domain_name }}{% endraw %}" \
-                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %}
+                --skipTests={% raw %}${{ inputs.include_tests == false }}{% endraw %} \
+                --skipDocs={% raw %}${{ inputs.include_docs == false }}{% endraw %}
               ;;
             *)
               echo "Unknown component type: {% raw %}${{ inputs.component_type }}{% endraw %}"
