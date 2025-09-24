@@ -15,6 +15,10 @@ coverage/
 .coverage
 htmlcov/
 
+# Python packaging metadata (auto-generated)
+*.egg-info/
+*.dist-info/
+
 # Environment
 .env
 .env.local
