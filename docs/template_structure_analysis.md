@@ -8,7 +8,7 @@ This is incorrect, as Cookiecutter only copies and renders the contents of the t
 
 This report details a refactoring plan to move all project-specific files and directories into the `{{ project_slug }}` template, ensuring that generated projects are complete and self-contained.
 
-Status note (2025-08-25): Migration complete. All major items below are struck through and present in the template. Docs/specs are now present in the template (see below for partials). Remaining work: review .gitignore, final doc deltas, and path validation.
+Status note (2025-08-25): Initial migration has been executed. Items below are struck through when completed, with brief notes inline. Remaining items are listed as Pending or Partial.
 
 ## 2. Analysis of Files and Directories
 
@@ -44,14 +44,14 @@ These files are essential for the `vibePDK` repository to function as a Cookiecu
 ### Special Case: `docs/` Directory
 
 The `docs` directory contains a mix of content:
-*   **Template Docs**: `README.md`, `migration-from-yaml.md`. — ~~Moved~~ (present under `{{ project_slug }}/docs/`).
-*   **Project Specs**: `dev_*.md`, `spec_index.md`, `traceability_matrix.md`, etc. — ~~Moved~~. All major specs and supporting docs are now present in the template, including: `commit_message_guidelines.md`, `dev_adr.md`, `dev_devkit-integration-plan.md`, `dev_implementation_plan.md`, `dev_prd.md`, `dev_sds.md`, `dev_technical-specifications.md`, `devkit-prompts-instructions-integration.md`, `environment_report.md`, `ideation-insights.md`, `dev_spec_index.md`, `spec_index.md`, `traceability_matrix.md`, `markdownlint.md`, and this `template_structure_analysis.md`.
+*   **Template Docs**: `README.md`, `migration-from-yaml.md`. — Status: Partially moved (present under `{{ project_slug }}/docs/`).
+*   **Project Specs**: `dev_*.md`, `spec_index.md`, `traceability_matrix.md`, etc. — Status: Partially moved. Present in template: `dev_spec_index.md`, `spec_index.md`, `traceability_matrix.md`, `markdownlint.md`. Remaining to move: `commit_message_guidelines.md`, `dev_adr.md`, `dev_devkit-integration-plan.md`, `dev_implementation_plan.md`, `dev_prd.md`, `dev_sds.md`, `dev_technical-specifications.md`, `devkit-prompts-instructions-integration.md`, `environment_report.md`, `ideation-insights.md`, and this `template_structure_analysis.md` if we want it in generated projects.
 
 ## 3. Recommended Next Steps
 
 To resolve this structural issue, a significant refactoring is required. The high-level steps are:
 
-1.  ~~**Move the identified files and directories** from the root of `vibePDK` into the `{{ project_slug }}` directory.~~ — Completed for all items listed above, including all major docs/specs.
+1.  ~~**Move the identified files and directories** from the root of `vibePDK` into the `{{ project_slug }}` directory.~~ — Completed for all items listed above except portions of `docs/` (partial).
 2.  ~~**Merge configurations** where necessary (e.g., `justfile`, `.gitignore`).~~ — `justfile` replaced in template; previous version saved as `justfile.template`. Review `.gitignore` deltas between root and template and consolidate as needed. Pending if differences exist.
 3.  **Adjust paths** in any scripts or configuration files that might break after the move. — Pending verification pass; initial smoke tests recommended.
 4.  **Clean up the root directory**, leaving only the files necessary for Cookiecutter itself. — Pending; after docs finalization, retain `cookiecutter.json`, `hooks/`, and template-development files only per plan.
