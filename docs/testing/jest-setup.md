@@ -214,10 +214,10 @@ For continuous integration:
 pnpm test:jest:coverage --ci --coverageReporters=text-lcov
 ```
 
-## Migration Notes
+## Legacy Reference
 
 ### From Vitest
-If migrating tests from Vitest:
+When porting tests that originally targeted Vitest:
 1. Change import statements to use Jest globals
 2. Update custom matchers to Jest format
 3. Adjust async test patterns if needed
