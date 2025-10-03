@@ -76,4 +76,4 @@ jobs:
       - name: Run tests in generated project
         run: |
           cd "$RENDERED_DIR" || exit 1
-          pnpm test --if-present || true
+          pnpm test --if-present
