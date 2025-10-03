@@ -36,11 +36,9 @@ jobs:
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - name: Setup pnpm
-<<<<<<< HEAD
-        uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
-=======
-        uses: pnpm/action-setup@v3
->>>>>>> 37cf339 (Enhance CI workflows: add concurrency settings, update Node.js and Python versions, and streamline dependency installation)
+       - name: Setup pnpm
+         uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # v3.0.0
+         with:
         with:
           version: 9
           run_install: false
