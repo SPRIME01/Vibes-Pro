@@ -15,7 +15,7 @@ prompts.
 
 ## Canonical Specification Stack
 
-Maintainers must review the full specification chain before performing updates. The documents live in `docs/aiassit/`:
+Maintainers must review the full specification chain before performing updates. The documents live in `docs/aiassist/`:
 
 - **Architecture Decisions:** [`AI_ADR.md`](./AI_ADR.md)
 - **Product Requirements:** [`AI_PRD.md`](./AI_PRD.md)
