@@ -7,8 +7,12 @@ function listMarkdown(root) {
     const entries = fs.readdirSync(root, { withFileTypes: true });
     for (const e of entries) {
         const p = path.join(root, e.name);
-        if (e.isDirectory()) out.push(...listMarkdown(p));
-        else if (e.isFile() && e.name.endsWith('.md')) out.push(p);
+        if (e.isDirectory()) {
+            if (e.name === 'archive') continue; // Exclude the archive directory
+            out.push(...listMarkdown(p));
+        } else if (e.isFile() && e.name.endsWith('.md')) {
+            out.push(p);
+        }
     }
     return out;
 }

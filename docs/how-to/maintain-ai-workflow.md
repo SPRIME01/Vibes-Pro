@@ -17,12 +17,12 @@ prompts.
 
 Maintainers must review the full specification chain before performing updates. The documents live in `docs/aiassist/`:
 
-- **Architecture Decisions:** [`AI_ADR.md`](./AI_ADR.md)
-- **Product Requirements:** [`AI_PRD.md`](./AI_PRD.md)
-- **Software Design Specification:** [`AI_SDS.md`](./AI_SDS.md)
-- **Technical Specification:** [`AI_TS.md`](./AI_TS.md)
-- **Integration Blueprint:** [`vibepdk-ai-integration-plan.md`](./vibepdk-ai-integration-plan.md)
-- **Traceability Matrix:** [`AI_traceability.md`](./AI_traceability.md)
+- **Architecture Decisions:** [`AI_ADR.md`](../explanation/ai-specifications/AI_ADR.md)
+- **Product Requirements:** [`AI_PRD.md`](../explanation/ai-specifications/AI_PRD.md)
+- **Software Design Specification:** [`AI_SDS.md`](../explanation/ai-specifications/AI_SDS.md)
+- **Technical Specification:** [`AI_TS.md`](../explanation/ai-specifications/AI_TS.md)
+- **Integration Blueprint:** [`vibepdk-ai-integration-plan.md`](../explanation/ai-specifications/vibepdk-ai-integration-plan.md)
+- **Traceability Matrix:** [`AI_traceability.md`](../explanation/ai-specifications/AI_traceability.md)
 
 Every change must cite the relevant spec IDs in commits, docs, and tests to satisfy the traceability mandate captured in AI_ADR-003.
 
