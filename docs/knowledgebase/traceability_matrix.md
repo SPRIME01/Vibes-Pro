@@ -1,0 +1,48 @@
+# Traceability Matrix
+
+Note: This file is generated/updated by tools/spec/matrix.js. Do not edit manually.
+
+| Spec ID | Artifacts | Status | Notes |
+|---|---|---|---|
+| ADR-001 | docs/archive/wiki/v1/4.md<br>docs/archive/wiki/v1/9.md<br>docs/archive/wiki/v2/6.md<br>docs/explanation/ai-specifications/AI_ADR.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/explanation/mergekit/ADR.md<br>docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| ADR-002 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_ADR.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| ADR-003 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_ADR.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/how-to/maintain-ai-workflow.md<br>docs/traceability_matrix.md | referenced |  |
+| ADR-004 | docs/explanation/ai-specifications/AI_ADR.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| ADR-005 | docs/explanation/ai-specifications/AI_ADR.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| ADR-006 | docs/explanation/ai-specifications/AI_ADR.md<br>docs/explanation/ai-specifications/AI_SECURITY_HARDENING.md<br>docs/how-to/security/integrate-security-hardening.md<br>docs/how-to/security/run-security-tests.md<br>docs/traceability_matrix.md | referenced |  |
+| ADR-008 | docs/how-to/write-commit-messages.md<br>docs/traceability_matrix.md | referenced |  |
+| ADR-04 | docs/traceability_matrix.md<br>docs/tutorials/getting-started-tdd.md | referenced |  |
+| DEV-PRD-005 | docs/archive/wiki/v1/1.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-001 | docs/archive/wiki/v1/1.md<br>docs/archive/wiki/v1/3.md<br>docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-002 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/explanation/mergekit/ADR.md<br>docs/how-to/maintain-ai-workflow.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-003 | docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-004 | docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-005 | docs/archive/wiki/v1/1.md<br>docs/explanation/ai-specifications/AI_PRD.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-006 | docs/explanation/ai-specifications/AI_SECURITY_HARDENING.md<br>docs/how-to/security/run-security-tests.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-023 | docs/how-to/write-commit-messages.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-123 | docs/traceability_matrix.md<br>docs/tutorials/getting-started-tdd.md | referenced |  |
+| SDS-001 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| SDS-002 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/how-to/maintain-ai-workflow.md<br>docs/traceability_matrix.md | referenced |  |
+| SDS-003 | docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| SDS-004 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_SDS.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| SDS-005 | docs/explanation/ai-specifications/AI_SECURITY_HARDENING.md<br>docs/how-to/security/run-security-tests.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-001 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/how-to/mergekit/initialize-dev-environment.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-002 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/explanation/mergekit/integration-blueprint.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-003 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/how-to/mergekit/initialize-dev-environment.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-004 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-005 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-006 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-007 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-008 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-009 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-010 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-011 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-012 | docs/explanation/mergekit/IMPLEMENTATION-PLAN.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-013 | docs/how-to/security/integrate-security-hardening.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-014 | docs/how-to/security/integrate-security-hardening.md<br>docs/traceability_matrix.md | referenced |  |
+| TASK-015 | docs/how-to/security/integrate-security-hardening.md<br>docs/how-to/security/run-security-tests.md<br>docs/traceability_matrix.md | referenced |  |
+| TS-001 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| TS-002 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| TS-003 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| TS-004 | docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/traceability_matrix.md | referenced |  |
+| TS-005 | docs/archive/wiki/v1/4.md<br>docs/explanation/ai-specifications/AI_TS.md<br>docs/explanation/ai-specifications/AI_traceability.md<br>docs/how-to/maintain-ai-workflow.md<br>docs/traceability_matrix.md | referenced |  |
