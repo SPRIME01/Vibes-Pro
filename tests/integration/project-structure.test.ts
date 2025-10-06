@@ -64,9 +64,13 @@ describe('Merged Project Structure', () => {
             // Use a test data file for consistent generation
             const testDataPath = 'tests/fixtures/test-data.yml';
 
-            execSync(`copier copy . ${testOutputDir} --data-file ${testDataPath} --defaults --force`, {
+            execSync(`copier copy . ${testOutputDir} --data-file ${testDataPath} --defaults --force --trust`, {
                 stdio: 'inherit',
                 cwd: process.cwd(),
+                env: {
+                    ...process.env,
+                    COPIER_SKIP_PROJECT_SETUP: '1'
+                }
             });
 
             // Verify the generated project has the expected structure

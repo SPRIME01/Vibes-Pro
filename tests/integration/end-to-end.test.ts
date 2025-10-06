@@ -38,9 +38,13 @@ describe('End-to-End Integration', () => {
         const projectPath = join(testWorkspace, 'test-project');
 
         // Generate project with test configuration
-        execSync(`copier copy . ${projectPath} --data project_name="Test Project" --data author_name="Test Author" --data include_ai_workflows=true --data architecture_style="hexagonal" --defaults`, {
+        execSync(`copier copy . ${projectPath} --data project_name="Test Project" --data author_name="Test Author" --data include_ai_workflows=true --data architecture_style="hexagonal" --defaults --trust`, {
             cwd: process.cwd(),
-            stdio: 'inherit'
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+                COPIER_SKIP_PROJECT_SETUP: '1'
+            }
         });
 
         // Verify project structure exists

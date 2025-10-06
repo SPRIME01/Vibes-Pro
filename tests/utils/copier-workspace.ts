@@ -42,7 +42,8 @@ export const generateWorkspace = async (options: GenerateWorkspaceOptions = {}):
         '.',
         workspacePath,
         '--data-file',
-        options.dataFile ?? DEFAULT_DATA_FILE
+        options.dataFile ?? DEFAULT_DATA_FILE,
+        '--trust'  // Allow tasks to run
     ];
 
     if (options.defaults !== false) {

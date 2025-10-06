@@ -20,7 +20,8 @@ const runCopierGeneration = async (): Promise<string> => {
         '--data-file',
         'tests/fixtures/test-data.yml',
         '--defaults',
-        '--force'
+        '--force',
+        '--trust'
     ].join(' ');
 
     execSync(command, { 

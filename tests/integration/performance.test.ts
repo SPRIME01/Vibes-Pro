@@ -29,9 +29,13 @@ describe('Performance Integration', () => {
 
         const startTime = performance.now();
 
-        execSync(`copier copy . ${projectPath} --data project_name="Performance Test Project" --data include_ai_workflows=true --data architecture_style="hexagonal" --defaults`, {
+        execSync(`copier copy . ${projectPath} --data project_name="Performance Test Project" --data include_ai_workflows=true --data architecture_style="hexagonal" --defaults --trust`, {
             cwd: process.cwd(),
-            stdio: 'pipe'
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+                COPIER_SKIP_PROJECT_SETUP: '1'
+            }
         });
 
         const endTime = performance.now();
@@ -45,9 +49,13 @@ describe('Performance Integration', () => {
         const projectPath = join(testWorkspace, 'build-perf-project');
 
         // Generate project first
-        execSync(`copier copy . ${projectPath} --data project_name="Build Performance Test" --data include_ai_workflows=false --defaults`, {
+        execSync(`copier copy . ${projectPath} --data project_name="Build Performance Test" --data include_ai_workflows=false --defaults --trust`, {
             cwd: process.cwd(),
-            stdio: 'pipe'
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+                COPIER_SKIP_PROJECT_SETUP: '1'
+            }
         });
 
         // Measure build time
@@ -77,9 +85,13 @@ describe('Performance Integration', () => {
         // Monitor memory usage during generation
         const initialMemory = process.memoryUsage();
 
-        execSync(`copier copy . ${projectPath} --data project_name="Memory Test Project" --defaults`, {
+        execSync(`copier copy . ${projectPath} --data project_name="Memory Test Project" --defaults --trust`, {
             cwd: process.cwd(),
-            stdio: 'pipe'
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+                COPIER_SKIP_PROJECT_SETUP: '1'
+            }
         });
 
         const finalMemory = process.memoryUsage();
@@ -92,9 +104,13 @@ describe('Performance Integration', () => {
     it('should have reasonable file generation count', async () => {
         const projectPath = join(testWorkspace, 'file-count-project');
 
-        execSync(`copier copy . ${projectPath} --data project_name="File Count Test" --data include_ai_workflows=true --defaults`, {
+        execSync(`copier copy . ${projectPath} --data project_name="File Count Test" --data include_ai_workflows=true --defaults --trust`, {
             cwd: process.cwd(),
-            stdio: 'pipe'
+            stdio: 'pipe',
+            env: {
+                ...process.env,
+                COPIER_SKIP_PROJECT_SETUP: '1'
+            }
         });
 
         // Count generated files (recursive)
