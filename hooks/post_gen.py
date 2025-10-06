@@ -88,12 +88,14 @@ def setup_generated_project(target: Path) -> None:
 
     if skip_setup:
         print('⚠️ Skipping install/build steps (COPIER_SKIP_PROJECT_SETUP=1)')
-    else:
-        print('🔧 Setting up generated project...')
-        generate_types(target)
-        run(["pnpm", "install"], cwd=target)
-        run(["uv", "sync", "--dev"], cwd=target)
-        run(["just", "build"], cwd=target)
+        cleanup_security_assets(target)
+        return
+        
+    print('🔧 Setting up generated project...')
+    generate_types(target)
+    run(["pnpm", "install"], cwd=target)
+    run(["uv", "sync", "--dev"], cwd=target)
+    run(["just", "build"], cwd=target)
 
     cleanup_security_assets(target)
 

@@ -23,7 +23,14 @@ const runCopierGeneration = async (): Promise<string> => {
         '--force'
     ].join(' ');
 
-    execSync(command, { cwd: process.cwd(), stdio: 'inherit' });
+    execSync(command, { 
+        cwd: process.cwd(), 
+        stdio: 'inherit',
+        env: {
+            ...process.env,
+            COPIER_SKIP_PROJECT_SETUP: '1'
+        }
+    });
     return workspace;
 };
 

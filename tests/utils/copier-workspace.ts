@@ -59,7 +59,11 @@ export const generateWorkspace = async (options: GenerateWorkspaceOptions = {}):
 
     const result = spawnSync('copier', args, {
         cwd: process.cwd(),
-        stdio: 'inherit'
+        stdio: 'inherit',
+        env: {
+            ...process.env,
+            COPIER_SKIP_PROJECT_SETUP: '1'  // Skip heavy setup steps in tests
+        }
     });
 
     if (result.status !== 0) {
