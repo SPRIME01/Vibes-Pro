@@ -22,6 +22,11 @@ _skip_if_exists:
 _tasks:
   - ["python3", "hooks/post_gen.py"]
 
+project_name:
+  type: str
+  help: "Project name (human-readable, will be converted to slug)"
+  default: "My Project"
+
 project_slug:
   type: str
   help: "Project slug (kebab-case, used for directories)"
