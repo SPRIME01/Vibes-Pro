@@ -9,8 +9,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-import yaml
-
 
 def run(cmd: list[str], cwd: Path) -> None:
     """Run a subprocess, printing the command for visibility."""
@@ -63,6 +61,7 @@ def _is_hardening_enabled(target: Path) -> bool:
         answers = target / fname
         if answers.exists():
             try:
+                import yaml  # Lazy import to avoid dependency issues when skipping setup
                 data = yaml.safe_load(answers.read_text()) or {}
                 if isinstance(data, dict) and "enable_security_hardening" in data:
                     return bool(data.get("enable_security_hardening"))
