@@ -26,9 +26,17 @@ const generateProject = async (): Promise<string> => {
             '--data-file',
             'tests/fixtures/test-data.yml',
             '--defaults',
-            '--force'
+            '--force',
+            '--trust'
         ].join(' '),
-        { cwd: process.cwd(), stdio: 'inherit' }
+        { 
+            cwd: process.cwd(), 
+            stdio: 'inherit',
+            env: {
+                ...process.env,
+                COPIER_SKIP_PROJECT_SETUP: '1'
+            }
+        }
     );
 
     return projectRoot;
