@@ -24,8 +24,8 @@ const runCopierGeneration = async (): Promise<string> => {
         '--trust'
     ].join(' ');
 
-    execSync(command, { 
-        cwd: process.cwd(), 
+    execSync(command, {
+        cwd: process.cwd(),
         stdio: 'inherit',
         env: {
             ...process.env,

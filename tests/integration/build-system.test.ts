@@ -13,8 +13,8 @@ describe('Hybrid Build System', () => {
 
     execSync(
       `copier copy . ${testOutputDir} --data-file tests/fixtures/test-data.yml --defaults --force --trust`,
-      { 
-        stdio: 'inherit', 
+      {
+        stdio: 'inherit',
         cwd: process.cwd(),
         env: {
           ...process.env,

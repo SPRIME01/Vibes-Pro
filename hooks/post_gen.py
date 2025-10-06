@@ -24,12 +24,12 @@ def generate_types(target: Path) -> None:
     type_generator_dir = target / "tools" / "type-generator"
     schema_path = target / "temporal_db" / "schema.json"
     ts_output_dir = target / "libs" / "shared" / "database-types"
-    
+
     # Check if type generator exists in generated project
     if not type_generator_dir.exists():
         print(f"   → Type generator not found at {type_generator_dir}, skipping type generation.")
         return
-        
+
     if not schema_path.parent.exists():
         print("   → Temporal database assets not found, skipping type generation.")
         return
@@ -90,7 +90,7 @@ def setup_generated_project(target: Path) -> None:
         print('⚠️ Skipping install/build steps (COPIER_SKIP_PROJECT_SETUP=1)')
         cleanup_security_assets(target)
         return
-        
+
     print('🔧 Setting up generated project...')
     generate_types(target)
     run(["pnpm", "install"], cwd=target)
