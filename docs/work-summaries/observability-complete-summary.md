@@ -2,7 +2,7 @@
 
 **Date**: 2025-10-12
 **Implementation**: All 6 Phases Complete
-**Spec References**: DEV-ADR-016, SDS-017
+**Spec References**: DEV-ADR-016, DEV-SDS-017
 
 ## Executive Summary
 

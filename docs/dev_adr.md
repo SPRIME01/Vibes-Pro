@@ -150,17 +150,12 @@ Consequences
 | AI Enablement | Historical OTLP data for feature extraction | Must govern PII fields before ingestion |
 
 Adoption phases
-1. Create crates/vibepro-observe exposing init_tracing() and record_metric() APIs. (traceability: DEV-SDS-017)
-2. Add ops/vector/vector.toml and CI validation step (vector validate).
-3. Connect Vector → OpenObserve in staging and validate retention/PII policies.
-4. Keep feature flag off by default; enable for opt‑in environments. Promote to default in Phase 2 after stabilization.
-
 Related
-- DEV-PRD-017 — Observability Integration Story (to be authored after prototype)
+- DEV-PRD-017 — Observability Integration Story (create before Phase 3 implementation)
 - docs/dev_tdd_observability.md (v1)
 
-- DEV-SDS-017 — Observability Design Spec (forthcoming)
-- Traceability: reference DEV-SDS-017 and DEV-PRD-017 in implementation commits
+- DEV-SDS-017 — Observability Design Spec (create before Phase 2 implementation)
+- Traceability: Phase 1 prototypes may proceed without specs; Phases 2+ must reference DEV-SDS-017 and DEV-PRD-017 in commits
 
 Notes
 - Ensure PII/PII‑like fields are redacted or filtered before export.
@@ -289,4 +284,3 @@ Validation
 - Progressive disclosure of options; sensible defaults; opinionated naming.
 - Idempotent tasks; hot-reload for instructions and modes.
 - Clear precedence rules; consistent folder conventions; ready-to-run samples.
-
