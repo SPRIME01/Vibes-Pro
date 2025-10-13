@@ -601,6 +601,8 @@ set -euo pipefail
 # Start Vector in background
 vector --config ops/vector/vector.toml &
 VECTOR_PID=$!
+# Ensure Vector is killed on script exit or error
+trap 'if [ -n "${VECTOR_PID:-}" ]; then kill ${VECTOR_PID} 2>/dev/null || true; fi' EXIT ERR
 sleep 2
 
 # Emit log with PII via test script

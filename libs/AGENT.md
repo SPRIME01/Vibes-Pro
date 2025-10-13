@@ -213,6 +213,8 @@ export class Order {
 
 ```typescript
 // libs/orders/domain/src/value-objects/email.vo.ts
+import { DomainException } from '../exceptions/domain.exception';
+
 export class Email {
   private constructor(private readonly value: string) {}
 
@@ -222,6 +224,7 @@ export class Email {
     }
     return new Email(email.toLowerCase().trim());
   }
+}
 
   private static isValid(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -283,8 +286,13 @@ export interface CreateOrderInput {
 export interface CreateOrderOutput {
   orderId: string;
   total: number;
-  status: string;
-}
+// libs/orders/application/src/use-cases/create-order.use-case.ts
+import { Order, OrderId, OrderItem } from '@my-app/orders-domain';
+import { OrderRepository } from '../ports/order-repository.port';
+import { ProductRepository } from '../ports/product-repository.port';
+import { EventBus } from '../ports/event-bus.port';
+import { OrderCreatedEvent } from '../events/order-created.event';
+import { ApplicationException } from '../exceptions/application.exception';
 
 export class CreateOrderUseCase {
   constructor(
@@ -299,6 +307,12 @@ export class CreateOrderUseCase {
       input.items.map(item => this.productRepository.findById(item.productId))
     );
 
+    if (products.some(p => p === null)) {
+      throw new ApplicationException('One or more products not found');
+    }
+    // …
+  }
+}
     if (products.some(p => p === null)) {
       throw new ApplicationException('One or more products not found');
     }

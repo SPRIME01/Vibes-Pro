@@ -682,8 +682,110 @@ python tools/validate-templates.py
 import re
 
 def validate_input(value: str) -> bool:
-    # Allow only alphanumeric, hyphens, underscores
-    return bool(re.match(r'^[a-zA-Z0-9_-]+$', value))
+    # Allow only lowercase alphanumeric and hyphens
+    return bool(re.match(r'^[a-z0-9-]+
+```
+
+## 🎯 Testing Strategy
+
+### Template Validation
+
+```python
+# tools/validate-templates.py
+import sys
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError
+
+def validate_templates(template_dir: Path) -> bool:
+    """Validate all Jinja2 templates."""
+    env = Environment(loader=FileSystemLoader(template_dir))
+
+    errors = []
+    for template_file in template_dir.rglob('*.j2'):
+        try:
+            template = env.get_template(str(template_file.relative_to(template_dir)))
+            # Validate syntax
+            template.module
+        except TemplateSyntaxError as e:
+            errors.append(f"{template_file}: {e}")
+
+    if errors:
+        for error in errors:
+            print(f"❌ {error}")
+        return False
+
+    print("✅ All templates valid")
+    return True
+
+if __name__ == '__main__':
+    templates_dir = Path(__file__).parent.parent / 'templates'
+    sys.exit(0 if validate_templates(templates_dir) else 1)
+```
+
+### Integration Test
+
+```bash
+#!/bin/bash
+# tests/test-template-generation.sh
+
+set -euo pipefail
+
+echo "🧪 Testing template generation..."
+
+# Generate test project
+TEST_DIR=$(mktemp -d)
+copier copy . "$TEST_DIR/test-project" \
+  --data project_name="Test Project" \
+  --data project_slug="test-project" \
+  --data use_typescript=true \
+  --data include_web_app=true \
+  --vcs-ref HEAD
+
+# Verify structure
+cd "$TEST_DIR/test-project"
+test -f package.json || exit 1
+test -d apps/web || exit 1
+test -f apps/web/src/pages/index.tsx || exit 1
+
+# Install and build
+pnpm install
+pnpm build
+
+echo "✅ Template generation test passed"
+rm -rf "$TEST_DIR"
+```
+
+## 🔄 Maintenance
+
+### Regular Tasks
+
+- **Weekly**: Test template generation with latest changes
+- **Monthly**: Update dependencies in template
+- **Quarterly**: Review copier.yml questions for relevance
+- **Per feature**: Update templates to match current conventions
+
+### When to Update This AGENT.md
+
+- Copier version updates
+- New template patterns emerge
+- Hook logic changes
+- Jinja2 best practices evolve
+
+### Common Issues & Solutions
+
+| Issue | Solution |
+|-------|----------|
+| Template syntax error | Run `python tools/validate-templates.py` |
+| Hook fails | Check Python syntax and imports |
+| Missing variables | Verify copier.yml has all required variables |
+| Wrong output | Test with `--vcs-ref HEAD` flag |
+| Whitespace issues | Use `{%-` and `-%}` for control |
+
+---
+
+_Last updated: 2025-10-13 | Maintained by: VibesPro Project Team_
+_Parent context: [copilot-instructions.md](/.github/copilot-instructions.md) | Navigation: [AGENT-MAP.md](/AGENT-MAP.md)_
+, value))
 ```
 
 ## 🎯 Testing Strategy
