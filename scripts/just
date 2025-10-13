@@ -28,6 +28,14 @@ if [[ "$#" -ge 1 ]]; then
       echo "just: executed $1"
       exit 0
       ;;
+    ai-advice)
+      echo "just: executed ai-advice"
+      exit 0
+      ;;
+    test-ai-guidance)
+      echo "just: executed test-ai-guidance"
+      exit 0
+      ;;
     build)
       echo "just: build completed"
       exit 0
