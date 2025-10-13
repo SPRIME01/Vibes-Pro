@@ -152,33 +152,33 @@ export class Order {
     private _status: OrderStatus,
     private readonly _createdAt: Date
   ) {}
-  
+
   // Factory method
   static create(id: OrderId, items: OrderItem[]): Order {
     if (items.length === 0) {
       throw new DomainException('Order must have at least one item');
     }
-    
+
     return new Order(id, items, OrderStatus.Pending, new Date());
   }
-  
+
   // Getters (no setters - immutability)
   get id(): OrderId {
     return this._id;
   }
-  
+
   get items(): readonly OrderItem[] {
     return Object.freeze([...this._items]);
   }
-  
+
   get status(): OrderStatus {
     return this._status;
   }
-  
+
   get total(): number {
     return this._items.reduce((sum, item) => sum + item.total, 0);
   }
-  
+
   // Business methods (behavior)
   confirm(): void {
     if (this._status === OrderStatus.Cancelled) {
@@ -187,23 +187,23 @@ export class Order {
     if (this._status === OrderStatus.Confirmed) {
       throw new DomainException('Order already confirmed');
     }
-    
+
     this._status = OrderStatus.Confirmed;
   }
-  
+
   cancel(): void {
     if (this._status === OrderStatus.Shipped) {
       throw new DomainException('Cannot cancel a shipped order');
     }
-    
+
     this._status = OrderStatus.Cancelled;
   }
-  
+
   addItem(item: OrderItem): void {
     if (this._status !== OrderStatus.Pending) {
       throw new DomainException('Cannot add items to non-pending order');
     }
-    
+
     this._items.push(item);
   }
 }
@@ -215,22 +215,22 @@ export class Order {
 // libs/orders/domain/src/value-objects/email.vo.ts
 export class Email {
   private constructor(private readonly value: string) {}
-  
+
   static create(email: string): Email {
     if (!Email.isValid(email)) {
       throw new DomainException('Invalid email format');
     }
     return new Email(email.toLowerCase().trim());
   }
-  
+
   private static isValid(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
-  
+
   getValue(): string {
     return this.value;
   }
-  
+
   equals(other: Email): boolean {
     return this.value === other.value;
   }
@@ -292,37 +292,37 @@ export class CreateOrderUseCase {
     private readonly productRepository: ProductRepository,
     private readonly eventBus: EventBus
   ) {}
-  
+
   async execute(input: CreateOrderInput): Promise<CreateOrderOutput> {
     // 1. Validate products exist
     const products = await Promise.all(
       input.items.map(item => this.productRepository.findById(item.productId))
     );
-    
+
     if (products.some(p => p === null)) {
       throw new ApplicationException('One or more products not found');
     }
-    
+
     // 2. Create domain entities
     const orderId = OrderId.generate();
-    const orderItems = input.items.map((item, index) => 
+    const orderItems = input.items.map((item, index) =>
       OrderItem.create(
         products[index]!,
         item.quantity
       )
     );
-    
+
     // 3. Create order (domain logic)
     const order = Order.create(orderId, orderItems);
-    
+
     // 4. Persist (through port)
     await this.orderRepository.save(order);
-    
+
     // 5. Publish domain event
     await this.eventBus.publish(
       new OrderCreatedEvent(order.id, input.userId, order.total)
     );
-    
+
     // 6. Return output
     return {
       orderId: order.id.value,
@@ -353,13 +353,13 @@ import { Pool } from 'pg';
 
 export class PostgresOrderRepository implements OrderRepository {
   constructor(private readonly pool: Pool) {}
-  
+
   async save(order: Order): Promise<void> {
     const client = await this.pool.connect();
-    
+
     try {
       await client.query('BEGIN');
-      
+
       // Insert order
       await client.query(
         `INSERT INTO orders (id, user_id, status, created_at, total)
@@ -375,7 +375,7 @@ export class PostgresOrderRepository implements OrderRepository {
           order.total,
         ]
       );
-      
+
       // Insert order items
       for (const item of order.items) {
         await client.query(
@@ -384,7 +384,7 @@ export class PostgresOrderRepository implements OrderRepository {
           [order.id.value, item.productId, item.quantity, item.price]
         );
       }
-      
+
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');
@@ -393,21 +393,21 @@ export class PostgresOrderRepository implements OrderRepository {
       client.release();
     }
   }
-  
+
   async findById(id: OrderId): Promise<Order | null> {
     const result = await this.pool.query(
       `SELECT * FROM orders WHERE id = $1`,
       [id.value]
     );
-    
+
     if (result.rows.length === 0) {
       return null;
     }
-    
+
     // Map database row to domain entity
     return this.toDomain(result.rows[0]);
   }
-  
+
   private toDomain(row: any): Order {
     // Reconstruct domain entity from database row
     // This is where ORM mapping would happen
@@ -432,7 +432,7 @@ export class SendGridEmailAdapter implements EmailService {
   constructor(apiKey: string) {
     sgMail.setApiKey(apiKey);
   }
-  
+
   async send(to: string, subject: string, body: string): Promise<void> {
     try {
       await sgMail.send({
@@ -461,19 +461,19 @@ export abstract class Id {
       throw new Error('Invalid ID format');
     }
   }
-  
+
   static generate(): string {
     return uuidv4();
   }
-  
+
   static isValid(value: string): boolean {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
   }
-  
+
   get value(): string {
     return this._value;
   }
-  
+
   equals(other: Id): boolean {
     return this._value === other._value;
   }
@@ -672,13 +672,13 @@ export class User {
     private _hashedPassword: string,  // Never expose raw password
     private readonly _roles: Role[]
   ) {}
-  
+
   // No getPassword() method - password never leaves entity
-  
+
   verifyPassword(plainPassword: string): boolean {
     return bcrypt.compareSync(plainPassword, this._hashedPassword);
   }
-  
+
   hasRole(role: Role): boolean {
     return this._roles.includes(role);
   }
@@ -698,7 +698,7 @@ describe('Order (Domain)', () => {
   it('should not allow confirming cancelled order', () => {
     const order = Order.create(/* ... */);
     order.cancel();
-    
+
     expect(() => order.confirm()).toThrow('Cannot confirm cancelled order');
   });
 });
@@ -715,9 +715,9 @@ describe('CreateOrderUseCase', () => {
   it('should call repository.save', async () => {
     const mockRepo = { save: jest.fn() };
     const useCase = new CreateOrderUseCase(mockRepo, ...);
-    
+
     await useCase.execute({ /* ... */ });
-    
+
     expect(mockRepo.save).toHaveBeenCalled();
   });
 });
@@ -734,10 +734,10 @@ describe('PostgresOrderRepository', () => {
   it('should save and retrieve order', async () => {
     const repo = new PostgresOrderRepository(testDb);
     const order = Order.create(/* ... */);
-    
+
     await repo.save(order);
     const retrieved = await repo.findById(order.id);
-    
+
     expect(retrieved).toEqual(order);
   });
 });

@@ -152,22 +152,22 @@ export async function serviceGenerator(
 ) {
   // 1. Normalize options
   const normalizedOptions = normalizeOptions(tree, options);
-  
+
   // 2. Generate domain layer
   addDomainLayer(tree, normalizedOptions);
-  
+
   // 3. Generate application layer
   addApplicationLayer(tree, normalizedOptions);
-  
+
   // 4. Generate infrastructure layer
   addInfrastructureLayer(tree, normalizedOptions);
-  
+
   // 5. Update workspace configuration
   updateWorkspaceConfig(tree, normalizedOptions);
-  
+
   // 6. Format files
   await formatFiles(tree);
-  
+
   return () => {
     console.log(`✅ Service "${options.name}" created successfully`);
   };
@@ -182,7 +182,7 @@ function normalizeOptions(
     ? `${names(options.directory).fileName}/${name}`
     : name;
   const projectRoot = `libs/${projectDirectory}`;
-  
+
   return {
     ...options,
     projectName: name,
@@ -194,7 +194,7 @@ function normalizeOptions(
 function addDomainLayer(tree: Tree, options: NormalizedSchema) {
   const templatePath = path.join(__dirname, 'files', 'domain');
   const targetPath = `${options.projectRoot}/domain`;
-  
+
   generateFiles(tree, templatePath, targetPath, {
     ...options,
     ...names(options.projectName),
@@ -267,15 +267,15 @@ export class <%= className %> {
     private readonly _id: <%= className %>Id,
     private readonly _createdAt: Date
   ) {}
-  
+
   static create(id: <%= className %>Id): <%= className %> {
     return new <%= className %>(id, new Date());
   }
-  
+
   get id(): <%= className %>Id {
     return this._id;
   }
-  
+
   get createdAt(): Date {
     return this._createdAt;
   }
@@ -353,7 +353,7 @@ pnpm exec nx g @nx/react:component OrderList \
   --directory=features/orders \
   --export \
   --style=css
-  
+
 # Result:
 # apps/web/src/features/orders/
 #   ├── OrderList.tsx
@@ -371,7 +371,7 @@ export async function apiEndpointGenerator(
   options: ApiEndpointGeneratorSchema
 ) {
   const normalizedOptions = normalizeOptions(tree, options);
-  
+
   // 1. Generate controller
   generateFiles(
     tree,
@@ -383,7 +383,7 @@ export async function apiEndpointGenerator(
       template: '',
     }
   );
-  
+
   // 2. Generate DTO
   generateFiles(
     tree,
@@ -395,7 +395,7 @@ export async function apiEndpointGenerator(
       template: '',
     }
   );
-  
+
   // 3. Generate tests
   generateFiles(
     tree,
@@ -407,10 +407,10 @@ export async function apiEndpointGenerator(
       template: '',
     }
   );
-  
+
   // 4. Update route configuration
   updateRouteConfig(tree, normalizedOptions);
-  
+
   await formatFiles(tree);
 }
 
@@ -545,18 +545,18 @@ function normalizeOptions(tree: Tree, options: Schema): NormalizedSchema {
   if (!/^[a-z][a-z0-9-]*$/.test(options.name)) {
     throw new Error('Name must be lowercase kebab-case');
   }
-  
+
   // Prevent path traversal
   const directory = options.directory || '';
   if (directory.includes('..')) {
     throw new Error('Directory cannot contain ".."');
   }
-  
+
   // Sanitize tags
   const tags = options.tags
     ? options.tags.split(',').map(t => t.trim()).filter(Boolean)
     : [];
-  
+
   return {
     ...options,
     name: options.name.toLowerCase(),

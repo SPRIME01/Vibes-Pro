@@ -340,11 +340,11 @@ def main():
     """Run pre-generation validation."""
     # Access Copier context
     project_slug = "{{ project_slug }}"
-    
+
     if not validate_project_slug(project_slug):
         print("❌ Error: project_slug must be lowercase kebab-case")
         sys.exit(1)
-    
+
     # Check for existing directory
     target_path = Path.cwd() / project_slug
     if target_path.exists():
@@ -352,7 +352,7 @@ def main():
         response = input("Continue anyway? [y/N] ")
         if response.lower() != 'y':
             sys.exit(1)
-    
+
     print("✅ Pre-generation checks passed")
 
 if __name__ == "__main__":
@@ -381,32 +381,32 @@ def main():
     """Run post-generation setup."""
     project_slug = "{{ project_slug }}"
     project_path = Path.cwd() / project_slug
-    
+
     print(f"📦 Setting up project: {project_slug}")
-    
+
     # Install Node dependencies
     if "{{ use_typescript }}" == "true":
         print("📥 Installing Node dependencies...")
         if not run_command(["pnpm", "install"], project_path):
             sys.exit(1)
-    
+
     # Install Python dependencies
     if "{{ use_python }}" == "true":
         print("🐍 Installing Python dependencies...")
         if not run_command(["uv", "sync"], project_path):
             sys.exit(1)
-    
+
     # Initialize git
     print("🔧 Initializing git repository...")
     if not run_command(["git", "init"], project_path):
         sys.exit(1)
-    
+
     run_command(["git", "add", "."], project_path)
     run_command(
         ["git", "commit", "-m", "chore: initial commit from template"],
         project_path
     )
-    
+
     print(f"\n✅ Project '{project_slug}' generated successfully!")
     print(f"\n📁 cd {project_slug}")
     print("🚀 pnpm dev")
@@ -699,7 +699,7 @@ from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError
 def validate_templates(template_dir: Path) -> bool:
     """Validate all Jinja2 templates."""
     env = Environment(loader=FileSystemLoader(template_dir))
-    
+
     errors = []
     for template_file in template_dir.rglob('*.j2'):
         try:
@@ -708,12 +708,12 @@ def validate_templates(template_dir: Path) -> bool:
             template.module
         except TemplateSyntaxError as e:
             errors.append(f"{template_file}: {e}")
-    
+
     if errors:
         for error in errors:
             print(f"❌ {error}")
         return False
-    
+
     print("✅ All templates valid")
     return True
 
