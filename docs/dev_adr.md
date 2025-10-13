@@ -269,13 +269,15 @@ Implementation Requirements
 2. Expand `PerformanceMonitor` (TypeScript/Node) spans to calculate baseline deltas and publish `performance_advisory` artifacts into redb.
 3. Update `AIContextManager` (TypeScript) scoring to weight context sources using temporal success metrics and pattern confidences.
 4. Add governance guards: retention policies, opt-out flags, and anonymization for sensitive fields prior to storage.
-5. Validate via the TDD plan in `docs/dev_tdd_ai_guidance.md`, covering unit, integration, and regression tests for each subsystem.
+5. Wire a consolidated CI workflow (`.github/workflows/ai-guidance.yml`) that runs `nx run-many --target=test --projects temporal,performance,context` and the new `just test-ai-guidance` wrapper before merge.
+6. Establish the S.W.O.R.D skill rubric (Safety, Workflow Observability, Reliability, Developer experience) and require every code path surfaced by the fabric to document how it satisfies the rubric within implementation PRs.
+7. Validate via the TDD plan in `docs/dev_tdd_ai_guidance.md`, covering unit, integration, and regression tests for each subsystem.
 
 Related Specs
 - DEV-PRD-018 — AI pattern intelligence & performance co-pilot
 - DEV-SDS-021 — AI guidance fabric design (to be authored)
 - DEV-SPEC-012 — Temporal database governance (existing)
-- docs/dev_tdd_ai_guidance.md — Phase-driven TDD execution plan
+- docs/dev_tdd_ai_guidance.md — Phase-driven TDD execution plan (now including CI workflow + S.W.O.R.D closure tracking)
 
 Validation
 - Clustering jobs produce recommendations with confidence ≥ defined threshold and link back to source ADR/commit IDs.

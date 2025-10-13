@@ -406,6 +406,8 @@ log.warning("auth failed", category="security", action="auth_failure")
 - `tests/context/test_context_manager_scoring.spec.ts` — Verifies scoring weights and token budget compliance.
 - `tests/cli/test_ai_advice_command.sh` — Exercises CLI surface for recommendations with mocked data.
 - `tests/security/test_temporal_opt_out.py` — Confirms opt-out sessions bypass persistence and redact identifiers.
+- `.github/workflows/ai-guidance.yml` — CI orchestrator running `nx run-many --target=test --projects temporal,performance,context` plus `just test-ai-guidance` wrapper.
+- `tests/compliance/test_sword_rubric.md` — Markdown-based smoke checklist ensuring Safety, Workflow Observability, Reliability, and Developer experience (S.W.O.R.D) guardrails are acknowledged per release.
 
 ### Success Criteria
 - ≥80% of surfaced suggestions cite prior successful artifacts and link to provenance.
@@ -413,12 +415,14 @@ log.warning("auth failed", category="security", action="auth_failure")
 - Context bundle relevance score (per existing evaluation hooks) improves by ≥15% without exceeding token budgets.
 - Opt-out compliance rate = 100% (no persisted data when flag enabled).
 - Developer satisfaction (post-experiment survey) improves by 1.0 point on a 5-point scale.
+- CI workflow `ai-guidance.yml` remains green across merge queue with ≤2% flake rate, and S.W.O.R.D rubric sign-offs are captured in release notes.
 
 ### Supported By
 - DEV-ADR-018 — Temporal AI intelligence fabric for guidance & optimization
 - DEV-SDS-021/022 — Design specifications (to be authored)
 - docs/dev_tdd_ai_guidance.md — TDD execution plan
 - Existing evaluation hooks (DEV-SDS-009) for measuring suggestion effectiveness
+- docs/dev_tdd_ai_guidance.md — CI workflow & S.W.O.R.D closure checklist
 
 ---
 
