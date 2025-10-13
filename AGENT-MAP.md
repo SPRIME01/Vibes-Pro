@@ -31,6 +31,7 @@ This map shows the distributed AGENT.md system that replicates the semantic rout
 - [temporal_db/AGENT.md](/temporal_db/AGENT.md) - AI Learning Database (Rust, sled)
 - [architecture/AGENT.md](/architecture/AGENT.md) - Architecture Documentation (CALM)
 - [ops/AGENT.md](/ops/AGENT.md) - Operations & Deployment
+- [hooks/AGENT.md](/hooks/AGENT.md) - Pre/Post-generation hooks (Copier templates)
 
 ## Quick Navigation
 
