@@ -441,21 +441,21 @@ ai-scaffold name="":
         fi
 
 ai-advice *ARGS:
-        @if command -v pnpm > /dev/null 2>&1; then \
-                pnpm exec tsx tools/ai/advice-cli.ts {{ARGS}}; \
-        else \
-                echo "❌ pnpm not found. Please install dependencies with 'just setup'."; \
-                exit 1; \
-        fi
+	@if command -v pnpm > /dev/null 2>&1; then \
+		pnpm exec tsx tools/ai/advice-cli.ts {{ARGS}}; \
+	else \
+		echo "❌ pnpm not found. Please install dependencies with 'just setup'."; \
+		exit 1; \
+	fi
 
 test-ai-guidance:
-        @echo "🔁 Running temporal recommendation tests..."
-        @python -m pytest tests/temporal/test_pattern_recommendations.py
-        @echo "🧪 Running performance + context vitest suites..."
-        @pnpm exec vitest run tests/perf/test_performance_advisories.spec.ts tests/context/test_context_manager_scoring.spec.ts
-        @echo "🧪 Running CLI smoke test..."
-        @tests/cli/test_ai_advice_command.sh
-        @echo "✅ AI guidance validation complete"
+	@echo "🔁 Running temporal recommendation tests..."
+	@python -m pytest tests/temporal/test_pattern_recommendations.py
+	@echo "🧪 Running performance + context vitest suites..."
+	@pnpm exec vitest run tests/perf/test_performance_advisories.spec.ts tests/context/test_context_manager_scoring.spec.ts
+	@echo "🧪 Running CLI smoke test..."
+	@tests/cli/test_ai_advice_command.sh
+	@echo "✅ AI guidance validation complete"
 
 # --- Specification Management ---
 
@@ -610,12 +610,14 @@ observe-verify:
 	@echo "Step 2: Testing OpenObserve sink configuration..."
 	@bash tests/ops/test_openobserve_sink.sh
 	@echo ""
-	@echo "Step 3: Starting Vector in background..."
-	@( just observe-start & ) ; \
+	@echo "Step 3: Starting Vector in background..." ; \
+	( just observe-start & ) ; \
+	VECTOR_PID=$! ; \
+	trap 'kill $VECTOR_PID 2>/dev/null || true' EXIT ; \
 	sleep 2 ; \
 	echo "" ; \
 	echo "Step 4: Running OTLP smoke test..." ; \
-	VIBEPRO_OBSERVE=1 OTLP_ENDPOINT=$${OTLP_ENDPOINT:-http://127.0.0.1:4317} \
+	VIBEPRO_OBSERVE=1 OTLP_ENDPOINT=${OTLP_ENDPOINT:-http://127.0.0.1:4317} \
 	cargo run --features otlp --manifest-path apps/observe-smoke/Cargo.toml ; \
 	sleep 1 ; \
 	echo "" ; \
@@ -626,6 +628,7 @@ observe-verify:
 	else \
 		echo "  ⚠️  No trace file found" ; \
 	fi ; \
+	kill $VECTOR_PID 2>/dev/null || true ; \
 	echo "" ; \
 	echo "✅ Phase 4 Complete: Trace ingested into OpenObserve" ; \
 	echo "" ; \

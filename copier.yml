@@ -88,7 +88,7 @@ domains:
   help: Multiple business areas? (comma-separated, e.g., 'users,billing,notifications' - or leave blank)
   placeholder: "users,billing"
   default: ""
-  validator: "{% if domains and domains != domains.lower() %}All domain names must be lowercase{% elif domains %}{% set invalid = [] %}{% for d in domains.split(',') %}{% if not d.strip().replace('-', '').replace('_', '').isalnum() %}{% set _ = invalid.append(d) %}{% endif %}{% endfor %}{% if invalid %}Invalid domain names: {{ invalid|join(', ') }}. Use lowercase letters, numbers, and dashes only{% endif %}{% endif %}"
+  validator: "{% if domains %}{% set invalid = [] %}{% for d in domains.split(',') %}{% set dn = d.strip() %}{% if dn != dn.lower() or not dn.replace('-', '').replace('_', '').isalnum() %}{% set _ = invalid.append(dn) %}{% endif %}{% endfor %}{% if invalid %}Invalid domain names: {{ invalid|join(', ') }}. Use lowercase letters, numbers, dashes, and underscores only{% endif %}{% endif %}"
 
 primary_domains:
   type: str
