@@ -302,7 +302,7 @@ specs:
 - Deploy to staging
 
 ## References
-- [DEV-PRD-042](../dev_prd.md#042)
+- [DEV-PRD-042](/docs/dev_prd.md#042)
 - [Implementation PR #123](https://github.com/...)
 ```
 

@@ -7,7 +7,7 @@
 
 ## 🔗 Parent Context
 
-See [root copilot-instructions.md](/. github/copilot-instructions.md) for comprehensive project guidance and [AGENT-MAP.md](/AGENT-MAP.md) for navigation across contexts.
+See [root copilot-instructions.md](/.github/copilot-instructions.md) for comprehensive project guidance and [AGENT-MAP.md](/AGENT-MAP.md) for navigation across contexts.
 
 ## 🎯 Local Scope
 
@@ -148,7 +148,7 @@ ${workspaceFolder} # Workspace root path
 ## 📚 Related Instructions
 
 **Core instruction files:**
-- [instructions/security.instructions.md](/. github/instructions/security.instructions.md) - Security guidelines (HIGHEST PRIORITY)
+- [instructions/security.instructions.md](/.github/instructions/security.instructions.md) - Security guidelines (HIGHEST PRIORITY)
 - [instructions/ai-workflows.constitution.instructions.md](/.github/instructions/ai-workflows.constitution.instructions.md) - Workflow constitution
 - [instructions/ai-workflows.instructions.md](/.github/instructions/ai-workflows.instructions.md) - Workflow policies
 - [instructions/generators-first.instructions.md](/.github/instructions/generators-first.instructions.md) - Generator-first approach
