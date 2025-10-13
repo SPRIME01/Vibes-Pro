@@ -346,7 +346,7 @@ log.warning("auth failed", category="security", action="auth_failure")
 - docs/ENVIRONMENT.md §9 — Logging Policy (to be added)
 - docs/observability/README.md §11 — Governance & Cost Controls (to be updated)
 
-## DEV-PRD-019 — AI pattern intelligence & performance co-pilot
+## DEV-PRD-018 — AI pattern intelligence & performance co-pilot
 
 - Description: As a developer, I want the assistant to surface proven architecture patterns, performance insights, and curated context so that my next steps align with successful historical decisions.
 

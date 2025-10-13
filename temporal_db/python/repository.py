@@ -9,13 +9,14 @@ In the future, this could be replaced with PyO3 bindings to the Rust implementat
 
 import json
 import sqlite3
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from .types import (
     ArchitecturalPattern,
     ChangeType,
+    PatternRecommendation,
     PatternType,
     SpecificationChange,
     SpecificationRecord,
@@ -97,6 +98,30 @@ class TemporalRepository:
                 examples TEXT NOT NULL,
                 metadata TEXT NOT NULL,
                 timestamp TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS pattern_recommendations (
+                id TEXT PRIMARY KEY,
+                pattern_name TEXT NOT NULL,
+                decision_point TEXT NOT NULL,
+                confidence REAL NOT NULL,
+                provenance TEXT NOT NULL,
+                rationale TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                metadata TEXT NOT NULL
+            )
+        ''')
+
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS recommendation_feedback (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                recommendation_id TEXT NOT NULL,
+                action TEXT NOT NULL,
+                reason TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         ''')
 
@@ -297,6 +322,231 @@ class TemporalRepository:
         ))
 
         self.connection.commit()
+
+    async def store_pattern_recommendation(
+        self,
+        recommendation: PatternRecommendation,
+    ) -> None:
+        """Persist a pattern recommendation."""
+
+        if not self.connection:
+            raise RuntimeError("Database not initialized")
+
+        cursor = self.connection.cursor()
+        cursor.execute(
+            '''
+            INSERT OR REPLACE INTO pattern_recommendations
+            (id, pattern_name, decision_point, confidence, provenance, rationale,
+             created_at, expires_at, metadata)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''',
+            (
+                recommendation.id,
+                recommendation.pattern_name,
+                recommendation.decision_point,
+                recommendation.confidence,
+                recommendation.provenance,
+                recommendation.rationale,
+                recommendation.created_at.astimezone(UTC).isoformat(),
+                recommendation.expires_at.astimezone(UTC).isoformat(),
+                json.dumps(recommendation.metadata),
+            ),
+        )
+
+        self.connection.commit()
+
+    async def get_pattern_recommendations(
+        self,
+        limit: int = 10,
+        include_expired: bool = False,
+    ) -> list[PatternRecommendation]:
+        """Fetch stored pattern recommendations ordered by recency."""
+
+        if not self.connection:
+            raise RuntimeError("Database not initialized")
+
+        cursor = self.connection.cursor()
+        if include_expired:
+            cursor.execute(
+                '''
+                SELECT * FROM pattern_recommendations
+                ORDER BY datetime(created_at) DESC
+                LIMIT ?
+                ''',
+                (limit,),
+            )
+        else:
+            cursor.execute(
+                '''
+                SELECT * FROM pattern_recommendations
+                WHERE datetime(expires_at) > datetime('now')
+                ORDER BY datetime(created_at) DESC
+                LIMIT ?
+                ''',
+                (limit,),
+            )
+
+        recommendations: list[PatternRecommendation] = []
+        for row in cursor.fetchall():
+            recommendations.append(
+                PatternRecommendation.from_dict(
+                    {
+                        "id": row["id"],
+                        "pattern_name": row["pattern_name"],
+                        "decision_point": row["decision_point"],
+                        "confidence": row["confidence"],
+                        "provenance": row["provenance"],
+                        "rationale": row["rationale"],
+                        "created_at": row["created_at"],
+                        "expires_at": row["expires_at"],
+                        "metadata": json.loads(row["metadata"]),
+                    }
+                )
+            )
+
+        return recommendations
+
+    async def purge_stale_recommendations(self, retention_days: int) -> int:
+        """Remove recommendations older than retention window."""
+
+        if not self.connection:
+            raise RuntimeError("Database not initialized")
+
+        if retention_days <= 0:
+            return 0
+
+        cursor = self.connection.cursor()
+        cutoff = datetime.now(UTC) - timedelta(days=retention_days)
+        cursor.execute(
+            '''
+            DELETE FROM pattern_recommendations
+            WHERE datetime(created_at) < datetime(?)
+            ''',
+            (cutoff.isoformat(),),
+        )
+        self.connection.commit()
+        return cursor.rowcount
+
+    async def record_recommendation_feedback(
+        self,
+        recommendation_id: str,
+        action: str,
+        reason: str | None = None,
+    ) -> PatternRecommendation | None:
+        """Record feedback and adjust recommendation confidence."""
+
+        if not self.connection:
+            raise RuntimeError("Database not initialized")
+
+        cursor = self.connection.cursor()
+        cursor.execute(
+            '''
+            INSERT INTO recommendation_feedback (recommendation_id, action, reason)
+            VALUES (?, ?, ?)
+            ''',
+            (recommendation_id, action, reason),
+        )
+
+        delta = 0.1 if action == "accept" else -0.15 if action == "dismiss" else 0.0
+        cursor.execute(
+            '''
+            SELECT * FROM pattern_recommendations
+            WHERE id = ?
+            ''',
+            (recommendation_id,),
+        )
+        row = cursor.fetchone()
+        if not row:
+            self.connection.commit()
+            return None
+
+        recommendation = PatternRecommendation.from_dict(
+            {
+                "id": row["id"],
+                "pattern_name": row["pattern_name"],
+                "decision_point": row["decision_point"],
+                "confidence": row["confidence"],
+                "provenance": row["provenance"],
+                "rationale": row["rationale"],
+                "created_at": row["created_at"],
+                "expires_at": row["expires_at"],
+                "metadata": json.loads(row["metadata"]),
+            }
+        )
+
+        updated = recommendation.with_adjusted_confidence(delta)
+        cursor.execute(
+            '''
+            UPDATE pattern_recommendations
+            SET confidence = ?, metadata = ?
+            WHERE id = ?
+            ''',
+            (
+                updated.confidence,
+                json.dumps({
+                    **updated.metadata,
+                    "last_feedback": action,
+                    "last_feedback_reason": reason,
+                    "last_feedback_at": datetime.now(UTC).isoformat(),
+                }),
+                updated.id,
+            ),
+        )
+
+        self.connection.commit()
+        return updated
+
+    async def get_recent_specifications(
+        self,
+        limit: int = 20,
+        spec_type: SpecificationType | None = None,
+    ) -> list[SpecificationRecord]:
+        """Return the most recent specification entries."""
+
+        if not self.connection:
+            raise RuntimeError("Database not initialized")
+
+        cursor = self.connection.cursor()
+        if spec_type is None:
+            cursor.execute(
+                '''
+                SELECT * FROM specifications
+                ORDER BY datetime(timestamp) DESC
+                LIMIT ?
+                ''',
+                (limit,),
+            )
+        else:
+            cursor.execute(
+                '''
+                SELECT * FROM specifications
+                WHERE spec_type = ?
+                ORDER BY datetime(timestamp) DESC
+                LIMIT ?
+                ''',
+                (spec_type.value, limit),
+            )
+
+        records: list[SpecificationRecord] = []
+        for row in cursor.fetchall():
+            records.append(
+                SpecificationRecord(
+                    id=row['id'],
+                    spec_type=SpecificationType(row['spec_type']),
+                    identifier=row['identifier'],
+                    title=row['title'],
+                    content=row['content'],
+                    template_variables=json.loads(row['template_variables']),
+                    timestamp=datetime.fromisoformat(row['timestamp']),
+                    version=row['version'],
+                    author=row['author'],
+                    matrix_ids=json.loads(row['matrix_ids']),
+                    metadata=json.loads(row['metadata']),
+                    hash=row['hash'],
+                )
+            )
+
+        return records
 
     async def analyze_decision_patterns(
         self,
