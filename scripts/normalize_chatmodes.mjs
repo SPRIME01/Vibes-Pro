@@ -19,7 +19,7 @@ async function walk(dir, list = []) {
 
 function titleFromFilename(fn) {
     const base = path.basename(fn, '.chatmode.md');
-    const parts = base.split(/[._\-]/).filter(Boolean);
+    const parts = base.split(/[._-]/).filter(Boolean);
     return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }
 
