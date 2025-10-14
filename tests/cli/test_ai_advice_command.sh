@@ -3,18 +3,22 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 TMP_DIR="$(mktemp -d)"
-DB_PATH="$TMP_DIR/temporal"  # sqlite path derived by repo
-BASELINE_PATH="$TMP_DIR/baselines.json"
+DB_PATH="${TMP_DIR}/temporal"  # sqlite path derived by repo
+BASELINE_PATH="${TMP_DIR}/baselines.json"
 export DB_PATH
-export PYTHONPATH="$ROOT_DIR:${PYTHONPATH:-}"
+export PYTHONPATH="${ROOT_DIR}:${PYTHONPATH:-}"
 
 cleanup() {
-  rm -rf "$TMP_DIR"
+  rm -rf "${TMP_DIR}"
 }
 trap cleanup EXIT
 
-python -m temporal_db.python.export_recommendations --db "$DB_PATH" --dry-run >/dev/null || true
+if ! python -m temporal_db.python.export_recommendations --db "${DB_PATH}" --dry-run 2>&1; then
+  echo "Warning: export_recommendations initialization failed" >&2
+fi
 
+# Seed the temporal DB using an embedded Python here-doc. Keep the block self-contained
+# so shellcheck won't mis-parse it.
 python - <<'PY'
 import asyncio
 import os
@@ -58,9 +62,10 @@ async def seed(db_path: str) -> None:
     await repo.close()
 
 asyncio.run(seed(os.environ["DB_PATH"]))
+print("Seeding completed successfully", flush=True)
 PY
 
-cat >"$BASELINE_PATH" <<'JSON'
+cat >"${BASELINE_PATH}" <<'JSON'
 {
   "baselines": {
     "context-loading": {
@@ -72,27 +77,22 @@ cat >"$BASELINE_PATH" <<'JSON'
 }
 JSON
 
-OUTPUT=$(
-  cd "$ROOT_DIR" && pnpm exec tsx tools/ai/advice-cli.ts \
-    --db "$DB_PATH" \
-    --baseline "$BASELINE_PATH" \
-    --dry-run \
-    --task "Plan repository layer"
-)
+OUTPUT=$(cd "${ROOT_DIR}" && pnpm exec tsx tools/ai/advice-cli.ts --db "${DB_PATH}" --baseline "${BASELINE_PATH}" --dry-run --task "Plan repository layer")
 
-if ! grep -q "Pattern Recommendations" <<<"$OUTPUT"; then
+if ! grep -q "Pattern Recommendations" <<<"${OUTPUT}"; then
   echo "Expected pattern recommendations section" >&2
   exit 1
 fi
 
-if ! grep -q "Performance Advisories" <<<"$OUTPUT"; then
+if ! grep -q "Performance Advisories" <<<"${OUTPUT}"; then
   echo "Expected performance advisories section" >&2
   exit 1
 fi
 
-if ! grep -q "Context Bundle for Task" <<<"$OUTPUT"; then
+if ! grep -q "Context Bundle for Task" <<<"${OUTPUT}"; then
   echo "Expected context bundle section" >&2
   exit 1
 fi
 
-printf '%s\n' "$OUTPUT" | head -n 20
+# Show a short preview of the output for diagnostics
+printf '%s\n' "${OUTPUT}" | head -n 20

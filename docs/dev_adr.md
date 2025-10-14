@@ -150,6 +150,11 @@ Consequences
 | AI Enablement | Historical OTLP data for feature extraction | Must govern PII fields before ingestion |
 
 Adoption phases
+
+1. **Phase 1 (Prototype):** Basic tracing integration in `vibepro-observe` crate; Vector + OpenObserve setup in dev environment only
+2. **Phase 2 (Alpha):** Expand to Node/Python services; add PII redaction transforms; limited production rollout (10% traffic)
+3. **Phase 3 (GA):** Full production rollout; mandatory for new services; observability PRD/SDS required
+
 Related
 - DEV-PRD-017 — Observability Integration Story (create before Phase 3 implementation)
 - docs/dev_tdd_observability.md (v1)

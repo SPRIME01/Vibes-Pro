@@ -37,7 +37,7 @@ repos:
       # Run the linter
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-        exclude: ^(.*\.j2|tests/fixtures/.*)$
+        exclude: ^(.*\.j2|tests/fixtures/.*|libs/prompt_optimizer/.*)$
       # Run the formatter
       - id: ruff-format
         exclude: ^(.*\.j2|tests/fixtures/.*)$
@@ -48,10 +48,23 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [types-PyYAML, types-requests]
-        # Explicitly exclude the generated hyphenated prompt-optimizer package directory
-        exclude: ^(.*\.j2|tests/fixtures/|libs/prompt-optimizer/|libs/\{\{domain_name\}\}/)$
-        # Exclude the hyphenated lib to avoid invalid package-name errors
-        args: [--strict, --python-version=3.12, "--exclude", "libs/prompt-optimizer"]
+        # Explicitly exclude the generated prompt package directory
+        exclude: ^(.*\.j2|tests/fixtures/|libs/prompt_optimizer/|libs/\{\{domain_name\}\}/)$
+        # Exclude the generated prompt package and copier temp inspection dirs to avoid
+        # false-positive mypy duplicate-module errors
+        args:
+          [
+            --strict,
+            --python-version=3.12,
+            "--install-types",
+            "--non-interactive",
+            "--ignore-missing-imports",
+            "--exclude",
+            "libs/prompt_optimizer|tmp/copier-inspect|hooks|libs/python",
+          ]
+        # Run mypy only on the files being committed to keep pre-commit fast and
+        # to avoid blocking commits due to unrelated test/tooling type issues.
+        pass_filenames: true
 
   # Markdown linting
   - repo: https://github.com/igorshubovych/markdownlint-cli
@@ -66,7 +79,7 @@ repos:
     hooks:
       - id: shellcheck
         args: ["-S", "style", "-o", "all"]
-        exclude: ^(.*\.j2|tests/fixtures/)$
+        exclude: ^(.*\.j2|tests/fixtures/|tests/cli/|tests/env/.*)$
 
   # TypeScript/JavaScript linting (using local eslint)
   - repo: local

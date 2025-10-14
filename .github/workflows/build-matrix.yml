@@ -298,6 +298,8 @@ jobs:
         run: |
           sops -d .secrets.env.sops > /tmp/ci.env
           set -a; source /tmp/ci.env; set +a
+          # Export to GITHUB_ENV for subsequent steps
+          cat /tmp/ci.env >> $GITHUB_ENV
 
       - name: Build (release)
         run: just build
@@ -322,4 +324,5 @@ jobs:
 
       - name: Cleanup secrets
         if: always()
+        run: rm -f /tmp/ci.env
         run: rm -f /tmp/ci.env

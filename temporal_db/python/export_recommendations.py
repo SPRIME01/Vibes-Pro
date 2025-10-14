@@ -15,39 +15,41 @@ from .repository import initialize_temporal_database
 
 async def _run_async(args: argparse.Namespace) -> dict[str, Any]:
     repository = await initialize_temporal_database(args.db)
-    recognizer = ArchitecturalPatternRecognizer(
-        repository,
-        retention_days=args.retention,
-        minimum_confidence=args.min_confidence,
-        max_recommendations=args.limit,
-    )
-
-    feedback_result: dict[str, str] | None = None
-    if args.feedback_action and args.feedback_id:
-        updated = await repository.record_recommendation_feedback(
-            args.feedback_id,
-            args.feedback_action,
-            args.feedback_reason,
+    try:
+        recognizer = ArchitecturalPatternRecognizer(
+            repository,
+            retention_days=args.retention,
+            minimum_confidence=args.min_confidence,
+            max_recommendations=args.limit,
         )
-        if updated:
-            feedback_result = {
-                "id": updated.id,
-                "action": args.feedback_action,
-            }
 
-    result = await recognizer.generate_recommendations(
-        lookback_days=args.lookback,
-        dry_run=args.dry_run,
-    )
-    existing = await recognizer.hydrate_existing(limit=args.limit)
-    await repository.close()
+        feedback_result: dict[str, str] | None = None
+        if args.feedback_action and args.feedback_id:
+            updated = await repository.record_recommendation_feedback(
+                args.feedback_id,
+                args.feedback_action,
+                args.feedback_reason,
+            )
+            if updated:
+                feedback_result = {
+                    "id": updated.id,
+                    "action": args.feedback_action,
+                }
 
-    return {
-        "generated": [recommendation.to_dict() for recommendation in result.recommendations],
-        "existing": [recommendation.to_dict() for recommendation in existing],
-        "retention_deleted": result.retention_deleted,
-        "feedback": feedback_result,
-    }
+        result = await recognizer.generate_recommendations(
+            lookback_days=args.lookback,
+            dry_run=args.dry_run,
+        )
+        existing = await recognizer.hydrate_existing(limit=args.limit)
+
+        return {
+            "generated": [recommendation.to_dict() for recommendation in result.recommendations],
+            "existing": [recommendation.to_dict() for recommendation in existing],
+            "retention_deleted": result.retention_deleted,
+            "feedback": feedback_result,
+        }
+    finally:
+        await repository.close()
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -93,4 +95,6 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
+    main()
+    main()
     main()
