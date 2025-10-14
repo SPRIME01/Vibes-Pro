@@ -37,7 +37,9 @@ jobs:
       - name: Install SOPS
         run: |
           SOPS_VERSION="3.9.3"
+          SOPS_CHECKSUM="expected_sha256_here"
           curl -LO "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64"
+          echo "${SOPS_CHECKSUM}  sops-v${SOPS_VERSION}.linux.amd64" | sha256sum -c -
           sudo mv "sops-v${SOPS_VERSION}.linux.amd64" /usr/local/bin/sops
           sudo chmod +x /usr/local/bin/sops
           sops --version
@@ -163,4 +165,5 @@ jobs:
 
       - name: Cleanup secrets
         if: always()
+        run: rm -f /tmp/ci.env
         run: rm -f /tmp/ci.env

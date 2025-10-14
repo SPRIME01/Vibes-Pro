@@ -16,7 +16,12 @@ from typing import Any
 LIBS_ROOT = Path(__file__).parent.parent / "libs"
 sys.path.append(str(LIBS_ROOT))
 
-PROMPT_OPTIMIZER_ROOT = LIBS_ROOT / "prompt-optimizer"
+# Prefer a PEP8-friendly module directory name; fall back to the
+# generated hyphenated layout for backwards compatibility.
+PROMPT_OPTIMIZER_ROOT = LIBS_ROOT / "prompt_optimizer"
+if not PROMPT_OPTIMIZER_ROOT.exists():
+    PROMPT_OPTIMIZER_ROOT = LIBS_ROOT / "prompt-optimizer"
+
 if PROMPT_OPTIMIZER_ROOT.exists():
     spec = importlib.util.spec_from_file_location(
         "prompt_optimizer",

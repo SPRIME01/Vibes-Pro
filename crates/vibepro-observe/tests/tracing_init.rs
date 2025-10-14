@@ -21,10 +21,18 @@ async fn emits_json_logs_by_default() {
 }
 
 #[tokio::test]
+#[tokio::test]
 async fn respect_env_flag_without_otlp_feature() {
-    // Even if VIBEPRO_OBSERVE=1, without `otlp` feature we must not panic.
+    struct EnvGuard(&'static str);
+    impl Drop for EnvGuard {
+        fn drop(&mut self) {
+            env::remove_var(self.0);
+        }
+    }
+
     env::set_var("VIBEPRO_OBSERVE", "1");
+    let _guard = EnvGuard("VIBEPRO_OBSERVE");
+
     let _ = init_tracing("unit-test-env");
     record_metric("unit.counter", 2.0);
-    env::remove_var("VIBEPRO_OBSERVE");
 }

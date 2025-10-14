@@ -54,10 +54,10 @@ function logger(service = process.env.SERVICE_NAME || 'vibepro-node') {
             // Inject trace context and ensure category exists
             log(obj) {
                 const result = {
+                    ...obj,
                     trace_id: obj.trace_id || '',
                     span_id: obj.span_id || '',
                     category: obj.category || 'app',
-                    ...obj,
                 };
 
                 // Clean up duplicates from base

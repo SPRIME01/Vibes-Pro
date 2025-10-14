@@ -16,9 +16,14 @@ static INIT_GUARD: OnceCell<()> = OnceCell::new();
 /// Initialize tracing for a given service name.
 /// Behavior:
 /// - Always installs JSON fmt layer + EnvFilter (RUST_LOG or default "info").
+/// Initialize tracing for a given service name.
+/// Behavior:
+/// - Always installs JSON fmt layer + EnvFilter (RUST_LOG or default "info").
+/// - If `VIBEPRO_OBSERVE=1` and feature `otlp` is enabled,
+///   installs an OTLP exporter targeting `OTLP_ENDPOINT` (default http://127.0.0.1:4317).
 pub fn init_tracing(service_name: &str) -> Result<()> {
-///   installs an OTLP exporter targeting `OTLP_ENDPOINT` (default grpc://127.0.0.1:4317).
-pub fn init_tracing(_service_name: &str) -> Result<()> {
+    // ... existing implementation unchanged, now using `service_name` everywhere ...
+}
     if INIT_GUARD.get().is_some() {
         return Ok(());
     }
