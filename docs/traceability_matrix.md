@@ -59,7 +59,7 @@ Note: This file is generated/updated by tools/spec/matrix.js. Do not edit manual
 | DEV-PRD-016 | docs/dev_prd.md<br>docs/dev_sds.md<br>docs/traceability_matrix.md<br>docs/work-summaries/pr-27-all-fixes-summary.md<br>docs/work-summaries/pr-27-resolution-complete.md | referenced |  |
 | DEV-PRD-017 | docs/dev_adr.md<br>docs/dev_prd.md<br>docs/dev_sds.md<br>docs/observability/README.md<br>docs/speckit_implementation_plan.md<br>docs/traceability_matrix.md<br>docs/work-summaries/v0.3.0-release-summary.md | referenced |  |
 | DEV-PRD-018 | docs/ENVIRONMENT.md<br>docs/dev_adr.md<br>docs/dev_prd.md<br>docs/dev_sds.md<br>docs/dev_spec_index.md<br>docs/dev_tdd_ai_guidance.md<br>docs/observability/README.md<br>docs/tmp/coderabbit.md<br>docs/traceability_matrix.md<br>docs/work-summaries/structured-logging-implementation.md | referenced |  |
-| DEV-PRD-019 | docs/tmp/coderabbit.md<br>docs/traceability_matrix.md | referenced |  |
+| DEV-PRD-019 | docs/dev_prd.md<br>docs/tmp/coderabbit.md<br>docs/traceability_matrix.md | referenced |  |
 | DEV-SDS-001 | docs/dev_devkit-integration-plan.md<br>docs/dev_sds.md<br>docs/dev_technical-specifications.md<br>docs/devkit-prompts-instructions-integration.md<br>docs/traceability_matrix.md | referenced |  |
 | DEV-SDS-002 | docs/dev_sds.md<br>docs/dev_technical-specifications.md<br>docs/traceability_matrix.md<br>docs/work-summaries/2025-10-08-template-cleanup-production.md | referenced |  |
 | DEV-SDS-003 | docs/dev_sds.md<br>docs/dev_technical-specifications.md<br>docs/speckit_implementation_plan.md<br>docs/traceability_matrix.md | referenced |  |
@@ -100,7 +100,7 @@ Note: This file is generated/updated by tools/spec/matrix.js. Do not edit manual
 | PRD-016 | docs/dev_prd.md<br>docs/dev_sds.md<br>docs/tmp/devenv.md<br>docs/traceability_matrix.md<br>docs/work-summaries/phase-0-environment-setup-complete.md<br>docs/work-summaries/phase-2-mise-integration-complete.md<br>docs/work-summaries/phase-5-volta-checks-complete.md<br>docs/work-summaries/phase-6-just-tasks-complete.md<br>docs/work-summaries/pr-27-all-fixes-summary.md<br>docs/work-summaries/pr-27-resolution-complete.md | referenced |  |
 | PRD-017 | docs/dev_adr.md<br>docs/dev_devkit-integration-plan.md<br>docs/dev_prd.md<br>docs/dev_sds.md<br>docs/observability/README.md<br>docs/spec_index.md<br>docs/speckit_implementation_plan.md<br>docs/traceability_matrix.md<br>docs/work-summaries/v0.3.0-release-summary.md | referenced |  |
 | PRD-018 | docs/ENVIRONMENT.md<br>docs/dev_adr.md<br>docs/dev_prd.md<br>docs/dev_sds.md<br>docs/dev_spec_index.md<br>docs/dev_tdd_ai_guidance.md<br>docs/observability/README.md<br>docs/tmp/coderabbit.md<br>docs/traceability_matrix.md<br>docs/work-summaries/structured-logging-implementation.md | referenced |  |
-| PRD-019 | docs/tmp/coderabbit.md<br>docs/traceability_matrix.md | referenced |  |
+| PRD-019 | docs/dev_prd.md<br>docs/tmp/coderabbit.md<br>docs/traceability_matrix.md | referenced |  |
 | PRD-023 | docs/commit_message_guidelines.md<br>docs/knowledgebase/how-to/write-commit-messages.md<br>docs/knowledgebase/traceability_matrix.md<br>docs/traceability_matrix.md | referenced |  |
 | PRD-042 | docs/generator-first-integration-summary.md<br>docs/traceability_matrix.md<br>docs/work-summaries/template-generator-integration-summary.md | referenced |  |
 | PRD-123 | docs/knowledgebase/traceability_matrix.md<br>docs/knowledgebase/tutorials/getting-started-tdd.md<br>docs/traceability_matrix.md<br>docs/vibecoding/tutorials/getting-started-tdd.md | referenced |  |

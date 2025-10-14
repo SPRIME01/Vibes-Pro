@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "exa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@smithery/cli",
+        "install",
+        "exa",
+        "--client",
+        "claude"
+      ]
+    }
+  }
+}

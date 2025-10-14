@@ -161,7 +161,7 @@ jobs:
       # If your unit tests/build need secrets, decrypt them. If not, the step will be skipped.
       - name: Decrypt secrets to ephemeral env (required when SOPS_AGE_KEY present)
         id: sops
-        if: secrets.SOPS_AGE_KEY != ''
+        if: env.SOPS_AGE_KEY != ''
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
@@ -172,7 +172,7 @@ jobs:
 
       # When secret not provided, explicitly mark loaded=false (so downstream steps can detect absence)
       - name: Mark secrets as not loaded (no SOPS_AGE_KEY)
-        if: secrets.SOPS_AGE_KEY == ''
+        if: env.SOPS_AGE_KEY == ''
         run: |
           echo "loaded=false" >> $GITHUB_OUTPUT
           echo "No SOPS_AGE_KEY provided; skipping secrets decryption."
@@ -293,6 +293,7 @@ jobs:
         run: mise install
 
       - name: Decrypt release secrets
+        if: env.SOPS_AGE_KEY != ''
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
@@ -324,5 +325,4 @@ jobs:
 
       - name: Cleanup secrets
         if: always()
-        run: rm -f /tmp/ci.env
         run: rm -f /tmp/ci.env

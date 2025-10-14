@@ -187,15 +187,24 @@ export class AIContextManager {
     this.maxTokens = config.maxTokens;
     this.reservedTokens = config.reservedTokens ?? 0;
     this.cacheSize = Math.max(1, config.cacheSize ?? 32);
-    this.weights = {
+
+    // Set default weights and merge with provided weights
+    const defaultWeights = {
       relevance: 0.4,
       recency: 0.15,
       success: 0.15,
       priority: 0.1,
       patternConfidence: 0.15,
       performance: 0.05,
+    };
+
+    this.weights = {
+      ...defaultWeights,
       ...config.weights
     };
+
+    // Validate weights
+    this.validateWeights(this.weights);
   }
 
   registerSource(source: ContextSource): void {
@@ -558,6 +567,21 @@ export class AIContextManager {
 
   private normalizePriority(priority: number): number {
     return this.clamp(priority, 0, 1);
+  }
+
+  private validateWeights(weights: AIContextManagerWeights): void {
+    // Check that all weights are positive numbers
+    for (const [key, value] of Object.entries(weights)) {
+      if (!Number.isFinite(value) || value < 0) {
+        throw new Error(`Weight for ${key} must be a non-negative number, got ${value}`);
+      }
+    }
+
+    // Check that weights sum to approximately 1.0 (with some tolerance for floating point errors)
+    const sum = Object.values(weights).reduce((acc, val) => acc + val, 0);
+    if (Math.abs(sum - 1.0) > 0.001) {
+      throw new Error(`Weights must sum to 1.0, current sum is ${sum.toFixed(4)}`);
+    }
   }
 
   private clamp(value: number, min: number, max: number): number {

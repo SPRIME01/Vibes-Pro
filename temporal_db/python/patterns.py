@@ -106,11 +106,13 @@ class ArchitecturalPatternRecognizer:
         return await self._repository.get_pattern_recommendations(limit=limit)
 
     def _calculate_confidence(self, stat: dict[str, object]) -> float:
-        total = int(stat.get("total_decisions", 0))
-        selected = int(stat.get("selected_count", 0))
+        total_raw = stat.get("total_decisions", 0)
+        selected_raw = stat.get("selected_count", 0)
+        total = int(total_raw) if isinstance(total_raw, int | str) else 0
+        selected = int(selected_raw) if isinstance(selected_raw, int | str) else 0
         if total == 0:
             return 0.0
-        base_confidence = selected / total
+        base_confidence = float(selected) / float(total)
         return min(0.98, max(0.1, base_confidence))
 
     def _select_best_pattern(
@@ -130,8 +132,22 @@ class ArchitecturalPatternRecognizer:
                 reverse=True,
             )
             top = sorted_candidates[0]
+            # Create a copy of the pattern with updated metadata to avoid mutation
             if not top.metadata.get("canonical_decision_point"):
-                top.metadata["canonical_decision_point"] = decision_point
+                updated_metadata = top.metadata.copy()
+                updated_metadata["canonical_decision_point"] = decision_point
+                return ArchitecturalPattern(
+                    id=top.id,
+                    pattern_name=top.pattern_name,
+                    pattern_type=top.pattern_type,
+                    context_similarity=top.context_similarity,
+                    usage_frequency=top.usage_frequency,
+                    success_rate=top.success_rate,
+                    last_used=top.last_used,
+                    pattern_definition=top.pattern_definition,
+                    examples=top.examples,
+                    metadata=updated_metadata,
+                )
             return top
 
         canonical_match = next(
@@ -168,7 +184,10 @@ class ArchitecturalPatternRecognizer:
         stat: dict[str, object],
         pattern: ArchitecturalPattern,
     ) -> dict[str, object]:
-        contexts = stat.get("contexts") or []
+        contexts_raw = stat.get("contexts") or []
+        contexts: list[str] = (
+            [str(c) for c in contexts_raw] if isinstance(contexts_raw, list | tuple) else []
+        )
         context_counts = Counter(contexts)
         top_contexts = [ctx for ctx, _ in context_counts.most_common(3)]
 
@@ -195,9 +214,14 @@ class ArchitecturalPatternRecognizer:
         confidence: float,
     ) -> str:
         decision_point = stat.get("decision_point", "unknown")
-        selected = int(stat.get("selected_count", 0))
-        total = int(stat.get("total_decisions", 0))
-        contexts = stat.get("contexts") or []
+        selected_raw = stat.get("selected_count", 0)
+        total_raw = stat.get("total_decisions", 0)
+        selected = int(selected_raw) if isinstance(selected_raw, int | str) else 0
+        total = int(total_raw) if isinstance(total_raw, int | str) else 0
+        contexts_raw = stat.get("contexts") or []
+        contexts: list[str] = (
+            [str(c) for c in contexts_raw] if isinstance(contexts_raw, list | tuple) else []
+        )
         unique_contexts = sorted({ctx.strip() for ctx in contexts if ctx})
 
         summary_lines = [

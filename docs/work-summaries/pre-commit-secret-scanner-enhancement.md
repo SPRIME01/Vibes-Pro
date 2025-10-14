@@ -35,7 +35,7 @@ Implemented a three-tier detection strategy:
 - Python-based secret scanner from Yelp
 - Scans staged files only
 - Uses baseline methodology
-- Command: `detect-secrets scan --baseline <temp>`
+- Command: `detect-secrets scan --all-files --baseline <temp>`
 - Falls back if gitleaks not available
 
 #### Tier 3: Enhanced Heuristics (Fallback)
@@ -121,7 +121,7 @@ The hook now provides helpful installation instructions when dedicated scanners 
 - **Gitleaks**: https://github.com/gitleaks/gitleaks
 - **detect-secrets**: https://github.com/Yelp/detect-secrets
 - **Security guidelines**: `.github/instructions/security.instructions.md`
-- **Original issue**: Line 23 fragile regex detection
+- **Original issue**: .githooks/pre-commit line 23 fragile regex detection - the original regex pattern at this line only detected quoted `key=value` assignments and missed JSON/YAML formats, unquoted assignments, and shorter secret values
 
 ## Future Enhancements
 

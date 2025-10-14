@@ -42,6 +42,72 @@ interface CliOptions {
   baselinePath?: string;
 }
 
+function validatePayload(payload: RecommendationPayload): void {
+  if (!payload || typeof payload !== 'object') {
+    throw new Error('Invalid payload: must be an object');
+  }
+
+  if (!Array.isArray(payload.generated)) {
+    throw new Error('Invalid payload: generated must be an array');
+  }
+
+  if (!Array.isArray(payload.existing)) {
+    throw new Error('Invalid payload: existing must be an array');
+  }
+
+  if (typeof payload.retention_deleted !== 'number') {
+    throw new Error('Invalid payload: retention_deleted must be a number');
+  }
+}
+
+function validateRecommendations(recommendations: RecommendationDTO[]): void {
+  recommendations.forEach((recommendation, index) => {
+    if (!recommendation.id || typeof recommendation.id !== 'string') {
+      throw new Error(`Invalid recommendation at index ${index}: id must be a non-empty string`);
+    }
+
+    if (!recommendation.pattern_name || typeof recommendation.pattern_name !== 'string') {
+      throw new Error(`Invalid recommendation at index ${index}: pattern_name must be a non-empty string`);
+    }
+
+    if (!recommendation.decision_point || typeof recommendation.decision_point !== 'string') {
+      throw new Error(`Invalid recommendation at index ${index}: decision_point must be a non-empty string`);
+    }
+
+    if (typeof recommendation.confidence !== 'number' || recommendation.confidence < 0 || recommendation.confidence > 1) {
+      throw new Error(`Invalid recommendation at index ${index}: confidence must be a number between 0 and 1`);
+    }
+
+    if (!recommendation.provenance || typeof recommendation.provenance !== 'string') {
+      throw new Error(`Invalid recommendation at index ${index}: provenance must be a non-empty string`);
+    }
+
+    if (!recommendation.rationale || typeof recommendation.rationale !== 'string') {
+      throw new Error(`Invalid recommendation at index ${index}: rationale must be a non-empty string`);
+    }
+
+    if (!recommendation.created_at || typeof recommendation.created_at !== 'string') {
+      throw new Error(`Invalid recommendation at index ${index}: created_at must be a non-empty string`);
+    }
+
+    if (!recommendation.expires_at || typeof recommendation.expires_at !== 'string') {
+      throw new Error(`Invalid recommendation at index ${index}: expires_at must be a non-empty string`);
+    }
+
+    if (!recommendation.metadata || typeof recommendation.metadata !== 'object') {
+      throw new Error(`Invalid recommendation at index ${index}: metadata must be an object`);
+    }
+
+    // Validate dates
+    try {
+      new Date(recommendation.created_at);
+      new Date(recommendation.expires_at);
+    } catch {
+      throw new Error(`Invalid recommendation at index ${index}: created_at and expires_at must be valid dates`);
+    }
+  });
+}
+
 function parseArgs(argv: string[]): CliOptions {
   const options: CliOptions = {
     dbPath: resolve('tmp/ai-guidance'),
@@ -150,7 +216,11 @@ function runPythonExporter(options: CliOptions): RecommendationPayload {
     throw new Error(result.stderr || 'Python exporter failed');
   }
 
-  return JSON.parse(result.stdout) as RecommendationPayload;
+  try {
+    return JSON.parse(result.stdout) as RecommendationPayload;
+  } catch (error) {
+    throw new Error(`Failed to parse JSON output from Python exporter: ${error instanceof Error ? error.message : String(error)}\nOutput: ${result.stdout}`);
+  }
 }
 
 function mergeRecommendations(payload: RecommendationPayload): RecommendationDTO[] {
@@ -245,8 +315,25 @@ async function main(): Promise<void> {
     const payload = runPythonExporter(options);
     const mergedRecommendations = mergeRecommendations(payload);
 
+    // Validate payload structure and data
+    validatePayload(payload);
+    validateRecommendations(mergedRecommendations);
+
     console.log('=== AI Guidance Fabric ===');
     console.log('');
+
+    // Validate that recommendation IDs exist before recording feedback
+    if (options.acceptId || options.dismissId) {
+      const feedbackId = options.acceptId || options.dismissId;
+      const exists = mergedRecommendations.some(r => r.id === feedbackId);
+      if (!exists) {
+        console.error(`Error: Recommendation ID "${feedbackId}" not found.`);
+        console.log('Available recommendation IDs:');
+        mergedRecommendations.forEach(r => console.log(`  - ${r.id}`));
+        process.exit(1);
+      }
+    }
+
     if (options.acceptId) {
       console.log(`Recorded acceptance feedback for recommendation ${options.acceptId}.`);
     }

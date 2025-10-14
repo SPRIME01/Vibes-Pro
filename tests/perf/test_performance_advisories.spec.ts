@@ -9,14 +9,16 @@ import type { PerformanceAdvisory } from '../../tools/performance/monitor.js';
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('PerformanceMonitor advisories', () => {
+  let tempDir: string;
   let baselinePath: string;
 
   beforeEach(() => {
-    baselinePath = join(mkdtempSync(join(tmpdir(), 'perf-monitor-')), 'baselines.json');
+    tempDir = mkdtempSync(join(tmpdir(), 'perf-monitor-'));
+    baselinePath = join(tempDir, 'baselines.json');
   });
 
   afterEach(() => {
-    rmSync(baselinePath, { force: true });
+    rmSync(tempDir, { force: true, recursive: true });
   });
 
   it('generates advisories when workflow regresses beyond threshold', async () => {

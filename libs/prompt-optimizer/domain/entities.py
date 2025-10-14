@@ -146,12 +146,10 @@ class Prompt:
 
     def is_analyzed(self) -> bool:
         """Check if the prompt has been fully analyzed."""
-        return all(
-            [
-                self.features is not None,
-                self.token_count is not None,
-                self.effectiveness_score is not None,
-            ]
+        return (
+            self.features is not None
+            and self.token_count is not None
+            and self.effectiveness_score is not None
         )
 
 
