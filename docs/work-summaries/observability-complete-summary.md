@@ -311,7 +311,7 @@ While the core system is complete, optional enhancements include:
 - **Compliance ready** with PII redaction
 
 ### Technical Debt
-- **Zero technical debt**: Implemented via TDD
+- **Minimal technical debt**: Implemented via TDD with documented limitations
 - **100% test coverage**: All exit criteria met
 - **Production-grade**: Security, performance, reliability
 
