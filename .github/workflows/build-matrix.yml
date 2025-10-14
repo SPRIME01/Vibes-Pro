@@ -216,6 +216,10 @@ jobs:
         if: hashFiles('pnpm-lock.yaml') != ''
         run: pnpm install --frozen-lockfile
 
+      - name: Install uv (Python tool manager)
+        # Use the astral-sh/setup-uv action to install uv on the runner so `uv` is available.
+        uses: astral-sh/setup-uv@6dfebec6ddbcd197e02256fbdf54deb334fb7f06
+
       - name: Install Python dependencies (uv)
         if: hashFiles('uv.lock') != '' || hashFiles('pyproject.toml') != ''
         run: uv sync --frozen
