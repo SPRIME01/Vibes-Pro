@@ -205,4 +205,3 @@ This plan drives the TDD execution for the "AI guidance fabric" defined in DEV-A
 | Phase 4 — Feedback surfaces | ✅ `surfaces-suite` CLI smoke | ✅ Feedback + observability guardrails enforced | CLI integrates recommendations + feedback |
 
 > Update the table as phases complete; both columns must read ✅ prior to marking a phase complete in work summaries.
-

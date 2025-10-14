@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from .repository import initialize_temporal_database
 from .patterns import ArchitecturalPatternRecognizer
+from .repository import initialize_temporal_database
 
 
 async def _run_async(args: argparse.Namespace) -> dict[str, Any]:
@@ -52,15 +52,25 @@ async def _run_async(args: argparse.Namespace) -> dict[str, Any]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Export pattern recommendations")
-    parser.add_argument('--db', required=True, help='Path to the temporal database base filename')
-    parser.add_argument('--lookback', type=int, default=45, help='Number of days to analyse')
-    parser.add_argument('--limit', type=int, default=10, help='Maximum recommendations to return')
-    parser.add_argument('--retention', type=int, default=90, help='Retention window for recommendations (days)')
-    parser.add_argument('--min-confidence', type=float, default=0.55, help='Minimum confidence threshold')
-    parser.add_argument('--dry-run', action='store_true', help='Skip persistence while generating recommendations')
-    parser.add_argument('--feedback-action', choices=['accept', 'dismiss'], help='Optional feedback action to record')
-    parser.add_argument('--feedback-id', help='Recommendation identifier for feedback')
-    parser.add_argument('--feedback-reason', help='Optional feedback rationale')
+    parser.add_argument("--db", required=True, help="Path to the temporal database base filename")
+    parser.add_argument("--lookback", type=int, default=45, help="Number of days to analyse")
+    parser.add_argument("--limit", type=int, default=10, help="Maximum recommendations to return")
+    parser.add_argument(
+        "--retention", type=int, default=90, help="Retention window for recommendations (days)"
+    )
+    parser.add_argument(
+        "--min-confidence", type=float, default=0.55, help="Minimum confidence threshold"
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Skip persistence while generating recommendations"
+    )
+    parser.add_argument(
+        "--feedback-action",
+        choices=["accept", "dismiss"],
+        help="Optional feedback action to record",
+    )
+    parser.add_argument("--feedback-id", help="Recommendation identifier for feedback")
+    parser.add_argument("--feedback-reason", help="Optional feedback rationale")
     return parser
 
 
@@ -69,9 +79,18 @@ def main() -> None:
     args = parser.parse_args()
     args.db = str(Path(args.db))
 
-    payload = asyncio.run(_run_async(args))
-    json.dump(payload, sys.stdout)
+    try:
+        payload = asyncio.run(_run_async(args))
+        json.dump(payload, sys.stdout)
+        sys.stdout.write("\n")
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    main()
+
+
+if __name__ == "__main__":
     main()

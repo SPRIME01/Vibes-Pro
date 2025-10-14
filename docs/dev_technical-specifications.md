@@ -41,6 +41,7 @@ Audience: Developers and CI maintainers
 - Golden tests for prompts: snapshot the rendered stack and compare on PR.
 
 ## DEV-SPEC-009 — Traceability matrix
+
 | Source | Target(s) |
 |-------|-----------|
 | DEV-ADR-001 Native substrate | DEV-PRD-001, DEV-SDS-001, DEV-SPEC-001/002 |

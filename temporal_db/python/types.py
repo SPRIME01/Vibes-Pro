@@ -14,6 +14,7 @@ from typing import Any
 
 class SpecificationType(Enum):
     """Type of specification document."""
+
     ADR = "ADR"
     PRD = "PRD"
     SDS = "SDS"
@@ -22,6 +23,7 @@ class SpecificationType(Enum):
 
 class PatternType(Enum):
     """Type of architectural pattern."""
+
     DOMAIN = "Domain"
     APPLICATION = "Application"
     INFRASTRUCTURE = "Infrastructure"
@@ -30,6 +32,7 @@ class PatternType(Enum):
 
 class ChangeType(Enum):
     """Type of change in the temporal database."""
+
     CREATE = "Create"
     UPDATE = "Update"
     DELETE = "Delete"
@@ -40,6 +43,7 @@ class ChangeType(Enum):
 @dataclass
 class SpecificationRecord:
     """A specification record stored in the temporal database."""
+
     id: str
     spec_type: SpecificationType
     identifier: str  # e.g., 'ADR-MERGE-001'
@@ -123,6 +127,7 @@ class SpecificationRecord:
 @dataclass
 class SpecificationChange:
     """A change record in the temporal database."""
+
     spec_id: str
     change_type: ChangeType
     field: str
@@ -163,6 +168,7 @@ class SpecificationChange:
 @dataclass
 class ArchitecturalPattern:
     """An architectural pattern stored in the temporal database."""
+
     id: str
     pattern_name: str
     pattern_type: PatternType
@@ -235,6 +241,7 @@ class ArchitecturalPattern:
 @dataclass
 class DecisionPoint:
     """A decision point in the specification process."""
+
     id: str
     specification_id: str
     decision_point: str
@@ -269,6 +276,7 @@ class DecisionPoint:
 @dataclass
 class DecisionOption:
     """A decision option for a decision point."""
+
     id: str
     decision_point_id: str
     option_name: str

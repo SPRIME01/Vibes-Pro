@@ -48,8 +48,10 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [types-PyYAML, types-requests]
+        # Explicitly exclude the generated hyphenated prompt-optimizer package directory
         exclude: ^(.*\.j2|tests/fixtures/|libs/prompt-optimizer/|libs/\{\{domain_name\}\}/)$
-        args: [--strict, --python-version=3.12]
+        # Exclude the hyphenated lib to avoid invalid package-name errors
+        args: [--strict, --python-version=3.12, "--exclude", "libs/prompt-optimizer"]
 
   # Markdown linting
   - repo: https://github.com/igorshubovych/markdownlint-cli
@@ -57,7 +59,6 @@ repos:
     hooks:
       - id: markdownlint
         args: ["--config", ".markdownlint.json", "--fix"]
-        exclude: ^(node_modules/|\.nx/|dist/|coverage/|.*\.j2|tests/fixtures/)$
 
   # Shell script linting
   - repo: https://github.com/shellcheck-py/shellcheck-py
@@ -75,7 +76,7 @@ repos:
         entry: bash -c 'if command -v pnpm >/dev/null 2>&1; then pnpm exec eslint --fix "$@"; else npx eslint --fix "$@"; fi' --
         language: system
         types_or: [javascript, jsx, ts, tsx]
-        exclude: ^(node_modules/|\.nx/|dist/|coverage/|.*\.j2|tests/fixtures/)$
+        exclude: ^(node_modules/|\.nx/|dist/|coverage/|.*\.j2|tests/fixtures/|tools/reference/)$
         require_serial: false
 
   # AGENTS.md and documentation link checking
