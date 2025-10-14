@@ -59,7 +59,8 @@ jobs:
 
       - name: Install Vector
         run: |
-          curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y --prefix /usr/local
+          curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y --prefix $HOME/.local
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
           vector --version
 
       - name: Trust mise config
