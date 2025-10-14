@@ -12,4 +12,3 @@ pnpm: 9.0.0
 docker: Docker version 28.3.3, build 980b856
 podman: 
 python: Python 3.12.11
-

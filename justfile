@@ -499,7 +499,7 @@ ai-suggest CONTEXT:
 observe-start:
 	@echo "🚀 Starting Vector pipeline with ops/vector/vector.toml..."
 	@command -v vector >/dev/null 2>&1 || { echo "❌ vector binary not found. Install from https://vector.dev/"; exit 1; }
-	@mkdir -p tmp/vector-data
+	@mkdir -p tmp/vector-data || { echo "❌ Failed to create tmp/vector-data"; exit 1; }
 	vector --config ops/vector/vector.toml --watch
 
 # Run OTLP integration tests with fake collector (Phase 3)
@@ -577,7 +577,7 @@ test-logs: test-logs-config test-logs-redaction test-logs-correlation
 
 observe-verify-span:
 	# Emits a synthetic span via a tiny Rust one-liner using the crate (or call your service's health endpoint)
-	RUST_LOG=info VIBEPRO_OBSERVE=1 OTLP_ENDPOINT=$${OTLP_ENDPOINT:-http://127.0.0.1:4317} \
+	@RUST_LOG=info VIBEPRO_OBSERVE=1 OTLP_ENDPOINT=${OTLP_ENDPOINT:-http://127.0.0.1:4317} \
 	cargo test -p vibepro-observe --features otlp --test otlp_gate -- --nocapture
 
 # --- Observability: smoke binary ---

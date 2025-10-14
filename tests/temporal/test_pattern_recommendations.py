@@ -6,16 +6,22 @@ from __future__ import annotations
 import asyncio
 import os
 import sys
+import tempfile
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-import tempfile
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root / "temporal_db"))
 
-from python.repository import initialize_temporal_database  # noqa: E402
 from python.patterns import ArchitecturalPatternRecognizer  # noqa: E402
-from python.types import ArchitecturalPattern, PatternRecommendation, PatternType, SpecificationRecord, SpecificationType  # noqa: E402
+from python.repository import initialize_temporal_database  # noqa: E402
+from python.types import (  # noqa: E402
+    ArchitecturalPattern,
+    PatternRecommendation,
+    PatternType,
+    SpecificationRecord,
+    SpecificationType,
+)
 
 
 async def _bootstrap_repository(db_path: str):
@@ -60,7 +66,9 @@ async def _bootstrap_repository(db_path: str):
 
 async def _generate_recommendations(tmp_path: Path):
     repository = await _bootstrap_repository(str(tmp_path / "temporal"))
-    recognizer = ArchitecturalPatternRecognizer(repository, retention_days=60, max_recommendations=3)
+    recognizer = ArchitecturalPatternRecognizer(
+        repository, retention_days=60, max_recommendations=3
+    )
 
     result = await recognizer.generate_recommendations(lookback_days=90)
     stored = await repository.get_pattern_recommendations(limit=5)
@@ -87,7 +95,7 @@ def test_recommendation_generation_creates_entries():
         assert "ports and adapters" in recommendation.rationale.lower()
         assert recommendation.metadata["total_decisions"] >= 3
     finally:
-        for file in tmp_dir.glob('*'):
+        for file in tmp_dir.glob("*"):
             try:
                 os.unlink(file)
             except OSError:
@@ -124,7 +132,9 @@ def test_retention_and_feedback_controls_confidence(tmp_path: Path):
 
     # Apply acceptance feedback to adjust confidence
     recent = existing[0]
-    updated = asyncio.run(repository.record_recommendation_feedback(recent.id, "accept", "Followed guidance"))
+    updated = asyncio.run(
+        repository.record_recommendation_feedback(recent.id, "accept", "Followed guidance")
+    )
     assert updated is not None
     assert updated.confidence > recent.confidence
 

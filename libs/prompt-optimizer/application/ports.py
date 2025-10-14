@@ -66,9 +66,7 @@ class MLModelPort(ABC):
 
     @abstractmethod
     async def generate_optimization_suggestions(
-        self,
-        prompt_content: str,
-        goal: OptimizationGoal
+        self, prompt_content: str, goal: OptimizationGoal
     ) -> list[str]:
         """Generate optimization suggestions using ML."""
         pass
@@ -83,36 +81,25 @@ class TemporalDatabasePort(ABC):
     """Port for temporal database operations."""
 
     @abstractmethod
-    async def store_prompt_analysis(
-        self,
-        prompt: Prompt,
-        timestamp: datetime
-    ) -> None:
+    async def store_prompt_analysis(self, prompt: Prompt, timestamp: datetime) -> None:
         """Store prompt analysis results in temporal database."""
         pass
 
     @abstractmethod
-    async def store_optimization_session(
-        self,
-        session: PromptOptimizationSession
-    ) -> None:
+    async def store_optimization_session(self, session: PromptOptimizationSession) -> None:
         """Store optimization session data."""
         pass
 
     @abstractmethod
     async def get_similar_prompts(
-        self,
-        features: dict[str, Any],
-        similarity_threshold: float = 0.7
+        self, features: dict[str, Any], similarity_threshold: float = 0.7
     ) -> list[Prompt]:
         """Find similar prompts based on features."""
         pass
 
     @abstractmethod
     async def get_optimization_patterns(
-        self,
-        goal: OptimizationGoal,
-        days_back: int = 90
+        self, goal: OptimizationGoal, days_back: int = 90
     ) -> list[dict[str, Any]]:
         """Get optimization patterns from historical data."""
         pass
@@ -122,10 +109,7 @@ class NotificationPort(ABC):
     """Port for notifications and events."""
 
     @abstractmethod
-    async def notify_optimization_complete(
-        self,
-        result: OptimizationResult
-    ) -> None:
+    async def notify_optimization_complete(self, result: OptimizationResult) -> None:
         """Notify when optimization is complete."""
         pass
 

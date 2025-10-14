@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import asyncio
 from collections import Counter
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 from .repository import TemporalRepository
 from .types import ArchitecturalPattern, PatternRecommendation, PatternType
@@ -66,7 +66,9 @@ class ArchitecturalPatternRecognizer:
             if confidence < self._minimum_confidence:
                 continue
 
-            best_pattern = self._select_best_pattern(candidates, stat["decision_point"], all_patterns)
+            best_pattern = self._select_best_pattern(
+                candidates, stat["decision_point"], all_patterns
+            )
             metadata = self._build_metadata(stat, best_pattern)
             rationale = self._compose_rationale(stat, best_pattern, confidence)
 
