@@ -19,7 +19,8 @@ function checkLinksInFile(file, root) {
     const findings = [];
 
     // Skip checking files in archive directories and temp docs - these often have intentionally broken links
-    if (file.includes('/archive/') || file.includes('/knowledgebase/archive/') || file.includes('/tmp/')) {
+    const skipPaths = ['/archive/', '/knowledgebase/archive/', '/tmp/'];
+    if (skipPaths.some(path => file.includes(path))) {
         return findings;
     }
 

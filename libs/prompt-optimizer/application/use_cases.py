@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from ..domain.entities import (
     FeedbackRecord,
@@ -265,7 +265,7 @@ class SubmitFeedbackUseCase:
     async def execute(self, command: SubmitFeedbackCommand) -> None:
         """Submit feedback for model improvement."""
         feedback = FeedbackRecord(
-            result_id=uuid4(),  # Would map to actual result ID
+            result_id=UUID(command.result_id),
             user_satisfaction=command.user_satisfaction,
             response_quality=command.response_quality,
             comments=command.comments,

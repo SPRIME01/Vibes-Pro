@@ -265,7 +265,6 @@ curl script.sh | bash -s -- --arg
 ```
 
 ### 4. Prompt Frontmatter Requirements
-### 4. Prompt Frontmatter Requirements
 **10 Required Fields** (plus 1 optional):
 1. `description` — Brief description
 2. `kind` — Type (prompt/chatmode/instruction)

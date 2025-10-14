@@ -253,13 +253,13 @@ Target budgets (staging guidance): CPU < **3%** per core at ~1k spans/s; memory 
 
 ## 11. Just Targets (reference)
 
-```make
+```just
 observe:start:
  vector --config ops/vector/vector.toml --watch
 
 observe:verify:
  vector validate ops/vector/vector.toml
- VIBEPRO_OBSERVE=1 OTLP_ENDPOINT=$${OTLP_ENDPOINT:-http://127.0.0.1:4317} \
+ VIBEPRO_OBSERVE=1 OTLP_ENDPOINT=${OTLP_ENDPOINT:-http://127.0.0.1:4317} \
  cargo run --features otlp --manifest-path apps/observe-smoke/Cargo.toml
 
 observe:logs:

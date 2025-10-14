@@ -148,6 +148,9 @@ class TemporalRepository:
         if not self.connection:
             raise RuntimeError("Database not initialized")
 
+        # Validate data before INSERT
+        self._validate_specification(spec)
+
         cursor = self.connection.cursor()
 
         # Store specification
@@ -367,6 +370,10 @@ class TemporalRepository:
         if not self.connection:
             raise RuntimeError("Database not initialized")
 
+        # Validate that datetime objects are timezone-aware
+        self._validate_datetime_timezone(recommendation.created_at, "created_at")
+        self._validate_datetime_timezone(recommendation.expires_at, "expires_at")
+
         cursor = self.connection.cursor()
         cursor.execute(
             """
@@ -498,7 +505,8 @@ class TemporalRepository:
         if action not in valid_actions:
             raise ValueError(f"Invalid action: {action}. Must be one of {valid_actions}")
 
-        delta = 0.1 if action == "accept" else -0.15 if action == "dismiss" else 0.0
+        # Since we've validated the action, we can safely use a simple conditional
+        delta = 0.1 if action == "accept" else -0.15
         cursor.execute(
             """
             SELECT * FROM pattern_recommendations
@@ -634,6 +642,27 @@ class TemporalRepository:
             patterns.append(pattern)
 
         return patterns
+
+    def _validate_datetime_timezone(self, dt: datetime, field_name: str) -> None:
+        """Validate that a datetime object is timezone-aware."""
+        if dt.tzinfo is None:
+            raise ValueError(f"DateTime field '{field_name}' must be timezone-aware")
+
+    def _validate_specification(self, spec: SpecificationRecord) -> None:
+        """Validate a specification record before storing."""
+        if not spec.id:
+            raise ValueError("Specification ID cannot be empty")
+        if not spec.identifier:
+            raise ValueError("Specification identifier cannot be empty")
+        if not spec.title:
+            raise ValueError("Specification title cannot be empty")
+        if not spec.content:
+            raise ValueError("Specification content cannot be empty")
+        if spec.version < 1:
+            raise ValueError("Specification version must be at least 1")
+
+        # Validate timestamp is timezone-aware
+        self._validate_datetime_timezone(spec.timestamp, "timestamp")
 
     async def close(self) -> None:
         """Close the database connection."""

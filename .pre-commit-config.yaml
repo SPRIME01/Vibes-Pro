@@ -14,7 +14,6 @@ repos:
       - id: end-of-file-fixer
         exclude: ^(.*\.j2|tests/fixtures/.*)$
       - id: check-yaml
-        args: ["--unsafe"] # Allow custom YAML tags
         exclude: ^(.*\.j2|\.github/copilot-instructions\.md)$
       - id: check-json
         exclude: ^(.*\.j2|tsconfig\..*\.json)$
@@ -48,10 +47,9 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [types-PyYAML, types-requests]
-        # Explicitly exclude the generated prompt package directory
-        exclude: ^(.*\.j2|tests/fixtures/|libs/prompt_optimizer/|libs/\{\{domain_name\}\}/)$
         # Exclude the generated prompt package and copier temp inspection dirs to avoid
         # false-positive mypy duplicate-module errors
+        exclude: ^(.*\.j2|tests/fixtures/|libs/\{\{domain_name\}\}/|libs/prompt-optimizer/.*\.py)$
         args:
           [
             --strict,
@@ -60,7 +58,7 @@ repos:
             "--non-interactive",
             "--ignore-missing-imports",
             "--exclude",
-            "libs/prompt_optimizer|tmp/copier-inspect|hooks|libs/python",
+            "libs/prompt_optimizer|tmp/copier-inspect|hooks|libs/python|libs/prompt-optimizer",
           ]
         # Run mypy only on the files being committed to keep pre-commit fast and
         # to avoid blocking commits due to unrelated test/tooling type issues.

@@ -25,6 +25,12 @@ async def _run_async(args: argparse.Namespace) -> dict[str, Any]:
 
         feedback_result: dict[str, str] | None = None
         if args.feedback_action and args.feedback_id:
+            # Validate that both feedback flags are provided together
+            if not (args.feedback_action and args.feedback_id):
+                raise ValueError(
+                    "Both --feedback-action and --feedback-id must be provided together"
+                )
+
             updated = await repository.record_recommendation_feedback(
                 args.feedback_id,
                 args.feedback_action,
@@ -91,10 +97,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
-
-
-if __name__ == "__main__":
-    main()
-    main()
     main()

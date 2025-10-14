@@ -46,6 +46,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Python dependencies
+        shell: bash
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
@@ -58,3 +59,6 @@ jobs:
 
       - name: CLI guidance smoke
         run: bash tests/cli/test_ai_advice_command.sh
+
+      - name: Run AI guidance test suite
+        run: just test-ai-guidance

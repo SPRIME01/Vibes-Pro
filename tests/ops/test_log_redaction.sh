@@ -10,7 +10,11 @@ have() { command -v "$1" >/dev/null 2>&1; }
 
 ensure_tools() {
   # Single tool check - keep simple to satisfy shellcheck
-  have "vector" || die "Missing tool: vector"
+  # SC2310: Disable set -e for this check intentionally
+  # shellcheck disable=SC2310
+  if ! have "vector"; then
+    die "Missing tool: vector"
+  fi
 }
 
 test_email_redaction() {
@@ -18,10 +22,10 @@ test_email_redaction() {
   local vrl_script='if exists(.attributes.user_email) { .attributes.user_email = "[REDACTED]" }; .'
 
   local output
-  output=$(echo '{"attributes":{"user_email":"test@example.com"}}' | vector vrl "$vrl_script" 2>&1) || \
+  output=$(echo '{"attributes":{"user_email":"test@example.com"}}' | vector vrl "${vrl_script}" 2>&1) || \
     die "Email redaction VRL failed"
 
-  echo "$output" | jq -e '.attributes.user_email == "[REDACTED]"' >/dev/null || \
+  echo "${output}" | jq -e '.attributes.user_email == "[REDACTED]"' >/dev/null || \
     die "Email was not redacted correctly"
 
   log "✓ Email redaction verified"
@@ -39,6 +43,7 @@ test_authorization_redaction() {
   echo "${output}" | jq -e '.attributes.authorization == "[REDACTED]"' >/dev/null || \
     die "Authorization was not redacted correctly"
 
+  log "✓ Authorization redaction verified"
 }
 
 test_non_pii_preserved() {

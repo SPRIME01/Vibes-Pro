@@ -58,6 +58,7 @@ export class PerformanceMonitor {
   private readonly baselines = new Map<string, BaselineEntry>();
   private readonly advisories: PerformanceAdvisory[] = [];
   private readonly history: PerformanceSample[] = [];
+  private persisting = false;
 
   constructor(options: PerformanceMonitorOptions = {}) {
     this.baselinePath = resolve(options.baselinePath ?? 'tmp/performance-baselines.json');
@@ -164,7 +165,12 @@ export class PerformanceMonitor {
 
   private setupObservers(): void {
     const observer = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
+      const entries = list.getEntries();
+      // Handle both single entries and arrays of entries
+      if (!entries) return;
+
+      const entriesArray = Array.isArray(entries) ? entries : [entries];
+      for (const entry of entriesArray) {
         const workflow = entry.name.replace(/-duration$/u, '');
         this.recordSample(workflow, entry.duration);
       }
@@ -187,12 +193,22 @@ export class PerformanceMonitor {
   }
 
   private persistState(): void {
-    const directory = dirname(this.baselinePath);
-    mkdirSync(directory, { recursive: true });
-    const payload: PersistedState = {
-      baselines: Object.fromEntries(this.baselines.entries())
-    };
-    writeFileSync(this.baselinePath, JSON.stringify(payload, null, 2));
+    // Skip if already persisting to prevent race conditions
+    if (this.persisting) {
+      return;
+    }
+
+    this.persisting = true;
+    try {
+      const directory = dirname(this.baselinePath);
+      mkdirSync(directory, { recursive: true });
+      const payload: PersistedState = {
+        baselines: Object.fromEntries(this.baselines.entries())
+      };
+      writeFileSync(this.baselinePath, JSON.stringify(payload, null, 2));
+    } finally {
+      this.persisting = false;
+    }
   }
 
   private updateBaseline(existing: BaselineEntry | undefined, duration: number): BaselineEntry {

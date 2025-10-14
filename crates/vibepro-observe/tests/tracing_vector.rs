@@ -38,15 +38,22 @@ impl EnvVarGuard {
 }
 
 impl Drop for EnvVarGuard {
-    // Explicitly flush the exporter
-    opentelemetry::global::shutdown_tracer_provider();
-            Some(val) => env::set_var("VIBEPRO_OBSERVE", val),
-            None => env::remove_var("VIBEPRO_OBSERVE"),
+    fn drop(&mut self) {
+        // Explicitly flush the exporter with error handling
+        // Ignore errors during shutdown as we're in a Drop context
+        let _ = opentelemetry::global::shutdown_tracer_provider();
+
+        // Restore original environment variables
+        if let Some(val) = &self.vibep {
+            env::set_var("VIBEPRO_OBSERVE", val);
+        } else {
+            env::remove_var("VIBEPRO_OBSERVE");
         }
 
-        match &self.otlp {
-            Some(val) => env::set_var("OTLP_ENDPOINT", val),
-            None => env::remove_var("OTLP_ENDPOINT"),
+        if let Some(val) = &self.otlp {
+            env::set_var("OTLP_ENDPOINT", val);
+        } else {
+            env::remove_var("OTLP_ENDPOINT");
         }
     }
 }
@@ -72,8 +79,6 @@ async fn emits_span_with_redactable_fields() {
         tracing::info!(event = "phase3_integration", detail = "ensuring OTLP pipeline works");
     }
 
-    drop(span);
-
     let tracer = opentelemetry::global::tracer("vector-integration");
     let mut direct_span = tracer.start("direct_otlp_span");
     direct_span.set_attribute(KeyValue::new("user.email", "alice@example.com"));
@@ -85,5 +90,4 @@ async fn emits_span_with_redactable_fields() {
     sleep(Duration::from_secs(2)).await;
 
     // guard is dropped here (end of scope) and will restore env vars
-    drop(guard);
 }
