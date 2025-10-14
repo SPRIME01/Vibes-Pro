@@ -100,6 +100,7 @@ export class PerformanceMonitor {
 
   recordSample(workflow: string, duration: number, metadata: Record<string, unknown> = {}): void {
     if (!Number.isFinite(duration) || duration < 0) {
+      console.debug(`[PerformanceMonitor] Dropped sample for workflow "${workflow}" due to invalid duration:`, duration, 'metadata:', metadata);
       return;
     }
 
