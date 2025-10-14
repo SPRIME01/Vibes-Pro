@@ -417,9 +417,9 @@ ai-validate:
 # Thin wrapper around 'nx generate' with helpful error messages
 # Usage: just ai-scaffold name=@nx/js:lib
 ai-scaffold name="":
-        @if [ -z "{{name}}" ]; then \
-                echo "Usage: just ai-scaffold name=<generator>"; \
-                echo ""; \
+	@if [ -z "{{name}}" ]; then \
+		echo "Usage: just ai-scaffold name=<generator>"; \
+		echo ""; \
 		echo "Examples:"; \
 		echo "  just ai-scaffold name=@nx/js:lib"; \
 		echo "  just ai-scaffold name=@nx/react:component"; \
@@ -434,7 +434,7 @@ ai-scaffold name="":
 			echo "Please run: just setup"; \
 			exit 1; \
 		fi; \
-        fi
+	fi
 
 ai-advice *ARGS:
 	@if command -v pnpm > /dev/null 2>&1; then \
