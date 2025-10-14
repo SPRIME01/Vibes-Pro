@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MISE_NONINTERACTIVE: "1"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -113,17 +112,15 @@ jobs:
           restore-keys: |
             pnpm-${{ runner.os }}-
 
-      - name: Decrypt secrets to ephemeral env (required when SOPS_AGE_KEY present)
-        # Provide SOPS_AGE_KEY via repo/org Actions secrets (optional)
-        if: env.SOPS_AGE_KEY != ''
-        env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY || '' }}
+      - name: Decrypt secrets to ephemeral env (if provided)
         run: |
-          if [ -n "${SOPS_AGE_KEY}" ] && [ -f .secrets.env.sops ]; then
+          # GitHub injects secrets into the environment only for run steps; check at runtime.
+          if [ -n "$SOPS_AGE_KEY" ] && [ -f .secrets.env.sops ]; then
+            echo "SOPS_AGE_KEY present; attempting decryption"
             sops -d .secrets.env.sops > /tmp/ci.env
             set -a; source /tmp/ci.env; set +a
           else
-            echo "No SOPS_AGE_KEY provided or .secrets.env.sops not found; failing as decryption was requested."
+            echo "No SOPS_AGE_KEY provided or .secrets.env.sops missing; skipping decryption."
             exit 1
           fi
 
