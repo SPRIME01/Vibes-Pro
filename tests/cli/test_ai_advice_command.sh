@@ -72,7 +72,13 @@ cat >"$BASELINE_PATH" <<'JSON'
 }
 JSON
 
-OUTPUT=$(cd "$ROOT_DIR" && pnpm exec tsx tools/ai/advice-cli.ts --db "$DB_PATH" --baseline "$BASELINE_PATH" --dry-run --task "Plan repository layer")
+OUTPUT=$(
+  cd "$ROOT_DIR" && pnpm exec tsx tools/ai/advice-cli.ts \
+    --db "$DB_PATH" \
+    --baseline "$BASELINE_PATH" \
+    --dry-run \
+    --task "Plan repository layer"
+)
 
 if ! grep -q "Pattern Recommendations" <<<"$OUTPUT"; then
   echo "Expected pattern recommendations section" >&2
