@@ -25,6 +25,9 @@ on:
 jobs:
   ai-guidance:
     runs-on: ubuntu-latest
+    env:
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +37,6 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
           run_install: false
 
       - uses: actions/setup-node@v4
