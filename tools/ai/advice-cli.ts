@@ -83,9 +83,15 @@ function parseArgs(argv: string[]): CliOptions {
       case '--reason':
         options.reason = argv[++index];
         break;
-      case '--baseline':
-        options.baselinePath = resolve(argv[++index] ?? options.baselinePath ?? '');
+      case '--baseline': {
+        const baselineArg = argv[++index];
+        if (!baselineArg) {
+          console.error('Error: --baseline requires a path argument.');
+          process.exit(1);
+        }
+        options.baselinePath = resolve(baselineArg);
         break;
+      }
       default:
         if (!arg.startsWith('--')) {
           options.task = arg;
