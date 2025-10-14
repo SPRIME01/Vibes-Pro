@@ -139,9 +139,9 @@ test-generation:
 	copier copy . ../test-output --data-file tests/fixtures/test-data.yml --trust --defaults --force
 	cd ../test-output && pnpm install && { \
 		echo "🏗️ Building all projects..."; \
-		pnpm build --if-present || { \
+		pnpm exec nx run-many --target=build --all || { \
 			echo "⚠️ Some build targets failed. Checking core domain libraries..."; \
-			if pnpm exec nx run test-domain-domain:build && pnpm exec nx run test-domain-application:build && pnpm exec nx run test-domain-infrastructure:build; then \
+			if pnpm exec nx run core:build; then \
 				echo "✅ Core domain libraries built successfully - MERGE-TASK-003 success criteria met"; \
 			else \
 				echo "❌ Core domain libraries failed to build"; \
