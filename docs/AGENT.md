@@ -7,7 +7,7 @@
 
 ## 🔗 Parent Context
 
-See [root copilot-instructions.md](/.github/copilot-instructions.md) for comprehensive project guidance and [AGENT-MAP.md](/AGENT-MAP.md) for navigation across contexts.
+See [root copilot-instructions.md](/.github/copilot-instructions.md) for comprehensive project guidance and [AGENT-MAP.md](../AGENT-MAP.md) for navigation across contexts.
 
 ## 🎯 Local Scope
 
@@ -101,10 +101,10 @@ DEV-<DOCTYPE>-###
 | Context | When to Use |
 |---------|-------------|
 | [.github/AGENT.md](/.github/AGENT.md) | Using spec-related prompts or chat modes |
-| [libs/AGENT.md](/libs/AGENT.md) | Implementing business logic from specs |
-| [apps/AGENT.md](/apps/AGENT.md) | Building application interfaces from specs |
-| [tests/AGENT.md](/tests/AGENT.md) | Writing tests for spec requirements |
-| [architecture/AGENT.md](/architecture/AGENT.md) | Working with CALM architecture diagrams |
+| [libs/AGENT.md](../libs/AGENT.md) | Implementing business logic from specs |
+| [apps/AGENT.md](../apps/AGENT.md) | Building application interfaces from specs |
+| [tests/AGENT.md](../tests/AGENT.md) | Writing tests for spec requirements |
+| [architecture/AGENT.md](../architecture/AGENT.md) | Working with CALM architecture diagrams |
 
 ## 🔧 Local Conventions
 
@@ -231,7 +231,7 @@ We will use Hexagonal Architecture (Ports & Adapters) because...
 ### Example 2: Implementing from Spec
 
 **Workflow:**
-1. Read relevant spec: `docs/dev_prd.md` or `docs/specs/features/auth.spec.md`
+1. Read relevant spec: `dev_prd.md` or `specs/features/auth.spec.md`
 2. Check spec ID: e.g., `DEV-PRD-042`
 3. Implement with traceability comment:
    ```typescript
@@ -302,7 +302,7 @@ specs:
 - Deploy to staging
 
 ## References
-- [DEV-PRD-042](/docs/dev_prd.md#042)
+- [DEV-PRD-042](dev_prd.md#042)
 - [Implementation PR #123](https://github.com/...)
 ```
 
@@ -486,4 +486,4 @@ just spec-guard
 ---
 
 _Last updated: 2025-10-13 | Maintained by: VibesPro Project Team_
-_Parent context: [copilot-instructions.md](/.github/copilot-instructions.md) | Navigation: [AGENT-MAP.md](/AGENT-MAP.md)_
+_Parent context: [copilot-instructions.md](/.github/copilot-instructions.md) | Navigation: [AGENT-MAP.md](../AGENT-MAP.md)_
