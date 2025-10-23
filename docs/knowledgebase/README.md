@@ -12,13 +12,16 @@ This knowledge base is organized into four main sections, based on the Diátaxis
 ---
 
 ## Explanation
-*Understand the "why" behind the VibePDK platform.*
+
+_Understand the "why" behind the VibePDK platform._
 
 ### Core Architecture
+
 - **[System Architecture](./explanation/system-architecture.md):** An overview of the Hexagonal Architecture and Domain-Driven Design principles.
 - **[Architecture-Aware Context](./explanation/architecture-aware-context.md):** How the AI understands and leverages the system's architecture.
 
 ### AI-Driven Workflow
+
 - **[AI Agent Playbook](./explanation/ai-agent-playbook.md):** The definitive guide to the AI agent stack, its layers, and core tenets.
 - **[AI Workflows Rationale](./explanation/ai-workflows-rationale.md):** The reasoning behind the AI-assisted development process.
 - **[AI Specifications](./explanation/ai-specifications/):** The canonical collection of ADRs, PRDs, and technical specifications for the AI system.
@@ -30,6 +33,7 @@ This knowledge base is organized into four main sections, based on the Diátaxis
   - [VibePDK AI Integration Plan](./explanation/ai-specifications/vibepdk-ai-integration-plan.md)
 
 ### MergeKit Engine
+
 - **[Integration Blueprint](./explanation/mergekit/integration-blueprint.md):** The strategy for merging HexDDD and VibePDK into a unified generator.
 - **[MergeKit Specifications](./explanation/mergekit/):** The collection of planning and design documents for the MergeKit engine.
   - [MergeKit ADR](./explanation/mergekit/ADR.md)
@@ -41,35 +45,41 @@ This knowledge base is organized into four main sections, based on the Diátaxis
 ---
 
 ## How-To Guides
-*Practical, step-by-step instructions for common tasks.*
+
+_Practical, step-by-step instructions for common tasks._
 
 ### AI Workflow
+
 - **[Maintain the AI Workflow](./how-to/maintain-ai-workflow.md):** A guide for developers evolving the AI-assisted workflow.
 - **[Use Chat Modes](./how-to/use-chat-modes.md):** How to effectively use the different AI chat modes.
 - **[Bundle AI Context](./how-to/bundle-context.md):** How to generate and use the AI context bundle.
 - **[Write Commit Messages](./how-to/write-commit-messages.md):** Guidelines for writing clear and traceable commit messages.
 
 ### Development & Scaffolding
+
 - **[Initialize Dev Environment (MergeKit)](./how-to/mergekit/initialize-dev-environment.md):** A checklist for setting up the MergeKit development environment.
 - **[Scaffold with Nx](./how-to/scaffold-with-nx.md):** How to use Nx to scaffold new components.
 - **[Configure MCP Tools](./how-to/configure-mcp.md):** How to configure the Model Context Protocol (MCP) tools.
 - **[Validate the Repo](./how-to/validate-repo.md):** How to run validation checks on the repository.
 
 ### Security
+
 - **[Integrate Security Hardening](./how-to/security/integrate-security-hardening.md):** A step-by-step guide for integrating security features.
 - **[Run Security Tests](./how-to/security/run-security-tests.md):** Procedures for validating the security of the application.
 
 ---
 
 ## Tutorials
-*Learn by doing with these guided walkthroughs.*
+
+_Learn by doing with these guided walkthroughs._
 
 - **[Getting Started with TDD](./tutorials/getting-started-tdd.md):** A step-by-step tutorial for test-driven development with the AI assistant.
 
 ---
 
 ## Reference
-*Detailed information, lists, and specifications.*
+
+_Detailed information, lists, and specifications._
 
 - **[Chat Modes](./reference/chat-modes.md):** A complete list of available AI chat modes.
 - **[Prompts](./reference/prompts.md):** A reference for the available AI prompts.
@@ -80,7 +90,8 @@ This knowledge base is organized into four main sections, based on the Diátaxis
 ---
 
 ## Archive
-*Historical documents, preserved for context.*
+
+_Historical documents, preserved for context._
 
 - **[Archived Specifications](./archive/specs/):** Historical and raw specification documents.
 - **[Archived Wiki](./archive/wiki/):** Previous versions of the project wiki.

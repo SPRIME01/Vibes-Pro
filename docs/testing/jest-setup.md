@@ -7,6 +7,7 @@ This document describes the comprehensive Jest testing setup for the VibesPro pr
 ## Configuration Files
 
 ### Main Configuration
+
 - **`jest.config.json`** - Main Jest configuration for the workspace
 - **`jest.setup.js`** - Global setup file with custom matchers and utilities
 - **`jest.d.ts`** - TypeScript type definitions for custom matchers and globals
@@ -40,12 +41,15 @@ pnpm test:jest tests/unit/jest-configuration.test.ts
 ## Configuration Details
 
 ### Test Patterns
+
 Jest will automatically discover and run tests matching these patterns:
+
 - `tests/**/*.{test,spec}.{ts,js}`
 - `tools/**/*.{test,spec}.{ts,js}`
 - `generators/**/*.{test,spec}.{ts,js}`
 
 ### Coverage Configuration
+
 - **Threshold**: 80% for branches, functions, lines, and statements
 - **Output**: Text, LCOV, HTML, and Clover formats
 - **Directory**: `coverage/` in workspace root
@@ -53,14 +57,16 @@ Jest will automatically discover and run tests matching these patterns:
 ### Custom Matchers
 
 #### File System Matchers
+
 ```typescript
-expect('/path/to/file').toBeFile();
-expect('/path/to/directory').toBeDirectory();
+expect("/path/to/file").toBeFile();
+expect("/path/to/directory").toBeDirectory();
 ```
 
 #### TypeScript Validation Matcher
+
 ```typescript
-expect('/path/to/typescript-file.ts').toHaveValidTypeScript();
+expect("/path/to/typescript-file.ts").toHaveValidTypeScript();
 ```
 
 ### Global Test Utilities
@@ -76,27 +82,29 @@ testUtils.cleanupTempDir(tempDir);
 
 // Create mock file structure
 testUtils.createMockFiles(baseDir, {
-  'file1.ts': 'export const foo = "bar";',
-  'dir/file2.js': 'console.log("hello");'
+  "file1.ts": 'export const foo = "bar";',
+  "dir/file2.js": 'console.log("hello");',
 });
 ```
 
 ## Test Structure Best Practices
 
 ### Test File Naming
+
 - Use `.test.ts` or `.spec.ts` for test files
 - Place tests close to the code they test when possible
 - Use descriptive names: `user-service.test.ts`, `domain-generator.spec.ts`
 
 ### Test Organization
+
 ```typescript
-describe('ComponentName', () => {
-  describe('method or feature', () => {
-    it('should do something specific', () => {
+describe("ComponentName", () => {
+  describe("method or feature", () => {
+    it("should do something specific", () => {
       // Test implementation
     });
 
-    it('should handle error cases', () => {
+    it("should handle error cases", () => {
       // Error handling test
     });
   });
@@ -104,23 +112,25 @@ describe('ComponentName', () => {
 ```
 
 ### Async Testing
+
 ```typescript
-it('should handle async operations', async () => {
+it("should handle async operations", async () => {
   const result = await asyncFunction();
-  expect(result).toBe('expected value');
+  expect(result).toBe("expected value");
 });
 ```
 
 ### Mocking Console Output
+
 Console methods are automatically mocked in tests. To test actual console output:
 
 ```typescript
-it('should log specific message', () => {
-  const consoleSpy = jest.spyOn(console, 'log');
+it("should log specific message", () => {
+  const consoleSpy = jest.spyOn(console, "log");
 
   functionThatLogs();
 
-  expect(consoleSpy).toHaveBeenCalledWith('expected message');
+  expect(consoleSpy).toHaveBeenCalledWith("expected message");
   consoleSpy.mockRestore();
 });
 ```
@@ -128,14 +138,18 @@ it('should log specific message', () => {
 ## TypeScript Configuration
 
 ### Test-Specific TypeScript Config
+
 The `tsconfig.spec.json` extends the base configuration with:
+
 - CommonJS module support for Jest compatibility
 - Jest and jest-extended types
 - Source maps for debugging
 - Relaxed isolation for test files
 
 ### Type Definitions
+
 Custom types are defined in `jest.d.ts`:
+
 - Global test utilities interface
 - Custom matcher declarations
 - Extended NodeJS global types
@@ -143,6 +157,7 @@ Custom types are defined in `jest.d.ts`:
 ## Coverage Reports
 
 Coverage reports are generated in multiple formats:
+
 - **Text**: Console output during test runs
 - **HTML**: Interactive browser-viewable report in `coverage/lcov-report/`
 - **LCOV**: Machine-readable format in `coverage/lcov.info`
@@ -151,6 +166,7 @@ Coverage reports are generated in multiple formats:
 ## Integration with Nx
 
 While Jest is configured as a standalone tool, it integrates with the Nx workspace:
+
 - Test files are discovered across all workspace projects
 - Coverage collection includes workspace libraries and tools
 - Respects Nx project boundaries and structure
@@ -160,11 +176,13 @@ While Jest is configured as a standalone tool, it integrates with the Nx workspa
 ### Common Issues
 
 1. **TypeScript Compilation Errors**
+
    - Ensure `tsconfig.spec.json` includes the test file
    - Check that custom types are properly imported
    - Verify Jest globals are available in test files
 
 2. **Module Resolution Issues**
+
    - Check `moduleNameMapping` in Jest config
    - Ensure relative imports use correct paths
    - Verify external dependencies are installed
@@ -175,7 +193,9 @@ While Jest is configured as a standalone tool, it integrates with the Nx workspa
    - Ensure test files are not in ignored directories
 
 ### Debug Mode
+
 Run tests with debugging enabled:
+
 ```bash
 # Enable verbose output
 pnpm test:jest --verbose
@@ -187,14 +207,17 @@ node --inspect-brk node_modules/.bin/jest --runInBand
 ## Performance Optimization
 
 ### Parallel Execution
+
 - Jest runs tests in parallel by default
 - Use `--runInBand` for debugging or CI environments with limited resources
 
 ### Cache Management
+
 - Jest caches transformed files for faster subsequent runs
 - Clear cache if experiencing issues: `pnpm test:jest --clearCache`
 
 ### Selective Testing
+
 ```bash
 # Run tests matching pattern
 pnpm test:jest --testNamePattern="should handle async"
@@ -209,6 +232,7 @@ pnpm test:jest:watch
 ## CI/CD Integration
 
 For continuous integration:
+
 ```bash
 # Run with coverage and CI-friendly output
 pnpm test:jest:coverage --ci --coverageReporters=text-lcov
@@ -217,14 +241,18 @@ pnpm test:jest:coverage --ci --coverageReporters=text-lcov
 ## Legacy Reference
 
 ### From Vitest
+
 When porting tests that originally targeted Vitest:
+
 1. Change import statements to use Jest globals
 2. Update custom matchers to Jest format
 3. Adjust async test patterns if needed
 4. Update mock implementations to use Jest mocks
 
 ### Adding New Tests
+
 When adding new test files:
+
 1. Use `.test.ts` or `.spec.ts` extension
 2. Place in appropriate directory (`tests/`, `tools/`, or `generators/`)
 3. Follow the established patterns for describe/it blocks
