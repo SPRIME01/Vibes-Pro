@@ -7,7 +7,7 @@
 
 ## 🔗 Parent Context
 
-See [root copilot-instructions.md](/.github/copilot-instructions.md) for comprehensive project guidance and [AGENT-MAP.md](../AGENT-MAP.md) for navigation across contexts.
+See the repository guidance in `.github/copilot-instructions.md` (repo root) for comprehensive project guidance and refer to `AGENT-MAP.md` at the repository root for navigation across contexts.
 
 ## 🎯 Local Scope
 
@@ -100,11 +100,9 @@ DEV-<DOCTYPE>-###
 
 | Context | When to Use |
 |---------|-------------|
-| [.github/AGENT.md](/.github/AGENT.md) | Using spec-related prompts or chat modes |
-| [libs/AGENT.md](../libs/AGENT.md) | Implementing business logic from specs |
-| [apps/AGENT.md](../apps/AGENT.md) | Building application interfaces from specs |
-| [tests/AGENT.md](../tests/AGENT.md) | Writing tests for spec requirements |
-| [architecture/AGENT.md](../architecture/AGENT.md) | Working with CALM architecture diagrams |
+| `.github/AGENT.md` | AI development system (prompts, chat modes) |
+
+> Note: This repository is a template repository. Several directory-scoped `AGENT.md` files are generated in projects created from these templates (for example `libs/AGENT.md` or `apps/AGENT.md`). Those files may not exist in this template repository. When you see a reference to a sibling `AGENT.md` file that doesn't exist here, check the generated project or the equivalent documentation in `docs/` or `AGENT-MAP.md`.
 
 ## 🔧 Local Conventions
 
@@ -486,4 +484,4 @@ just spec-guard
 ---
 
 _Last updated: 2025-10-13 | Maintained by: VibesPro Project Team_
-_Parent context: [copilot-instructions.md](/.github/copilot-instructions.md) | Navigation: [AGENT-MAP.md](../AGENT-MAP.md)_
+_Parent context: see `.github/copilot-instructions.md` (repository root) for master instructions. For a navigation map, see `AGENT-MAP.md` (repository root)._ 
