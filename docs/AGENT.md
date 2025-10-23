@@ -12,12 +12,13 @@ See the repository guidance in `.github/copilot-instructions.md` (repo root) for
 ## 🎯 Local Scope
 
 **This directory handles:**
+
 - Architectural Decision Records (ADR)
 - Product Requirements Documents (PRD)
 - Software Design Specifications (SDS)
 - Technical Specifications (TS)
 - Traceability matrix linking specs to implementation
-- Developer-focused documentation (DEV-* specs)
+- Developer-focused documentation (DEV-\* specs)
 - Knowledge base and how-to guides
 
 **Architecture Layer**: N/A (Documentation/Specification)
@@ -25,6 +26,7 @@ See the repository guidance in `.github/copilot-instructions.md` (repo root) for
 ## 📁 Key Files & Patterns
 
 ### Directory Structure
+
 ```
 docs/
 ├── dev_adr.md                          # Architecture Decision Records
@@ -53,23 +55,23 @@ docs/
 
 ### Key Specification Documents
 
-| Document | Purpose | Spec ID Prefix | Location |
-|----------|---------|----------------|----------|
-| **ADR** | Architectural decisions | `DEV-ADR-###` | `dev_adr.md` |
-| **PRD** | Product requirements | `DEV-PRD-###` | `dev_prd.md` |
-| **SDS** | Software design spec | `DEV-SDS-###` | `dev_sds.md` |
-| **TS** | Technical specifications | `DEV-TS-###` | `dev_technical-specifications.md` |
-| **Spec Index** | Specification catalog | N/A | `spec_index.md`, `dev_spec_index.md` |
-| **Traceability** | Requirement mapping | N/A | `traceability_matrix.md` |
+| Document         | Purpose                  | Spec ID Prefix | Location                             |
+| ---------------- | ------------------------ | -------------- | ------------------------------------ |
+| **ADR**          | Architectural decisions  | `DEV-ADR-###`  | `dev_adr.md`                         |
+| **PRD**          | Product requirements     | `DEV-PRD-###`  | `dev_prd.md`                         |
+| **SDS**          | Software design spec     | `DEV-SDS-###`  | `dev_sds.md`                         |
+| **TS**           | Technical specifications | `DEV-TS-###`   | `dev_technical-specifications.md`    |
+| **Spec Index**   | Specification catalog    | N/A            | `spec_index.md`, `dev_spec_index.md` |
+| **Traceability** | Requirement mapping      | N/A            | `traceability_matrix.md`             |
 
 ### File Naming Conventions
 
-| File Type | Pattern | Location | Example |
-|-----------|---------|----------|---------|
-| **Dev Specs** | `dev_*.md` | `docs/` | `dev_adr.md`, `dev_prd.md` |
-| **Feature Specs** | `*.spec.md` | `docs/specs/features/` | `authentication.spec.md` |
-| **How-to Guides** | `*.md` | `docs/how-to/` | `setup-development.md` |
-| **Work Summaries** | `YYYY-MM-DD-*.md` | `docs/work-summaries/` | `2025-10-13-feature-x.md` |
+| File Type          | Pattern           | Location               | Example                    |
+| ------------------ | ----------------- | ---------------------- | -------------------------- |
+| **Dev Specs**      | `dev_*.md`        | `docs/`                | `dev_adr.md`, `dev_prd.md` |
+| **Feature Specs**  | `*.spec.md`       | `docs/specs/features/` | `authentication.spec.md`   |
+| **How-to Guides**  | `*.md`            | `docs/how-to/`         | `setup-development.md`     |
+| **Work Summaries** | `YYYY-MM-DD-*.md` | `docs/work-summaries/` | `2025-10-13-feature-x.md`  |
 
 ### Spec ID Format
 
@@ -78,6 +80,7 @@ DEV-<DOCTYPE>-###
 ```
 
 **Examples:**
+
 - `DEV-ADR-001` - First architectural decision
 - `DEV-PRD-042` - Product requirement #42
 - `DEV-SDS-015` - Software design spec #15
@@ -98,8 +101,8 @@ DEV-<DOCTYPE>-###
 
 ### Refer to Other Contexts When:
 
-| Context | When to Use |
-|---------|-------------|
+| Context            | When to Use                                 |
+| ------------------ | ------------------------------------------- |
 | `.github/AGENT.md` | AI development system (prompts, chat modes) |
 
 > Note: This repository is a template repository. Several directory-scoped `AGENT.md` files are generated in projects created from these templates (for example `libs/AGENT.md` or `apps/AGENT.md`). Those files may not exist in this template repository. When you see a reference to a sibling `AGENT.md` file that doesn't exist here, check the generated project or the equivalent documentation in `docs/` or `AGENT-MAP.md`.
@@ -115,20 +118,23 @@ ADR → SDS/Technical Specs → PRD → DEV-* specs
 ```
 
 **Ordering principle:**
+
 1. **Architecture** (ADR) defines the structure
 2. **Design/Technical** (SDS/TS) defines the solution
 3. **Product** (PRD) defines the requirements
-4. **Developer** (DEV-*) documents the implementation
+4. **Developer** (DEV-\*) documents the implementation
 
 ### Traceability Requirements
 
 **Every implementation must:**
+
 - Reference at least one spec ID in code comments
 - Link to spec IDs in commit messages
 - Update traceability matrix after changes
 - Document spec gaps when conflicts arise
 
 **Example traceability comment:**
+
 ```typescript
 // DEV-PRD-042, DEV-SDS-015: OAuth2 authentication flow
 export class AuthService {
@@ -156,6 +162,7 @@ When specifications conflict:
 - **Frontmatter**: Include `matrix_ids` for traceability
 
 **Example frontmatter:**
+
 ```yaml
 ---
 title: "Feature Name"
@@ -170,12 +177,14 @@ status: draft|approved|implemented
 ## 📚 Related Instructions
 
 **Modular instructions that apply here:**
+
 - [.github/instructions/docs.instructions.md](/.github/instructions/docs.instructions.md) - Documentation guardrails
 - [.github/instructions/dev-docs.instructions.md](/.github/instructions/dev-docs.instructions.md) - Developer docs guardrails
 - [.github/instructions/commit-msg.instructions.md](/.github/instructions/commit-msg.instructions.md) - Commit messages with spec IDs
 - [.github/instructions/security.instructions.md](/.github/instructions/security.instructions.md) - Security in specs
 
 **Relevant prompts:**
+
 - [.github/prompts/spec.plan.adr.prompt.md](/.github/prompts/spec.plan.adr.prompt.md) - Generate ADR
 - [.github/prompts/spec.plan.prd.prompt.md](/.github/prompts/spec.plan.prd.prompt.md) - Generate PRD
 - [.github/prompts/spec.plan.sds.prompt.md](/.github/prompts/spec.plan.sds.prompt.md) - Generate SDS
@@ -184,6 +193,7 @@ status: draft|approved|implemented
 - [.github/prompts/spec.traceability.update.prompt.md](/.github/prompts/spec.traceability.update.prompt.md) - Update traceability
 
 **Related chat modes:**
+
 - `spec.lean` - Minimal specification generation
 - `spec.wide` - Comprehensive specification generation
 - `spec.nfr` - Non-functional requirements
@@ -213,10 +223,12 @@ We will use Hexagonal Architecture (Ports & Adapters) because...
 ## Consequences
 
 **Positive:**
+
 - Clear separation of concerns
 - Easy to test in isolation
 
 **Negative:**
+
 - More initial boilerplate
 - Team learning curve
 
@@ -229,6 +241,7 @@ We will use Hexagonal Architecture (Ports & Adapters) because...
 ### Example 2: Implementing from Spec
 
 **Workflow:**
+
 1. Read relevant spec: `dev_prd.md` or `specs/features/auth.spec.md`
 2. Check spec ID: e.g., `DEV-PRD-042`
 3. Implement with traceability comment:
@@ -249,14 +262,17 @@ We will use Hexagonal Architecture (Ports & Adapters) because...
 **Scenario**: PRD says "use JWT" but ADR says "avoid stateless auth"
 
 **Resolution:**
+
 ```markdown
 ## Spec Gap: Authentication Token Format
 
 **Conflict:**
+
 - DEV-PRD-042 requires JWT tokens
 - DEV-ADR-005 prefers stateful session auth
 
 **Options:**
+
 1. Use JWT with short expiry (5 min) + refresh tokens
    - Pro: Satisfies both specs partially
    - Con: Added complexity
@@ -286,20 +302,24 @@ specs:
 # Work Summary: Feature X Implementation
 
 ## What Was Done
+
 - Implemented OAuth2 authentication flow
 - Added unit tests for AuthService
 - Updated traceability matrix
 
 ## Decisions Made
+
 - Used Passport.js for OAuth2 (DEV-TS-007)
 - Stored tokens in Redis (DEV-ADR-003)
 
 ## Next Steps
+
 - Add integration tests
 - Update API documentation
 - Deploy to staging
 
 ## References
+
 - [DEV-PRD-042](./dev_prd.md)
 - [Implementation PR #123](https://github.com/...)
 ```
@@ -384,13 +404,13 @@ pnpm run docs:generate
 
 ### Spec ID Prefixes
 
-| Prefix | Document Type | Example |
-|--------|---------------|---------|
-| `DEV-ADR` | Architectural Decision Record | `DEV-ADR-001` |
-| `DEV-PRD` | Product Requirement | `DEV-PRD-042` |
-| `DEV-SDS` | Software Design Spec | `DEV-SDS-015` |
-| `DEV-TS` | Technical Specification | `DEV-TS-007` |
-| `DEV-SPEC` | General Development Spec | `DEV-SPEC-003` |
+| Prefix     | Document Type                 | Example        |
+| ---------- | ----------------------------- | -------------- |
+| `DEV-ADR`  | Architectural Decision Record | `DEV-ADR-001`  |
+| `DEV-PRD`  | Product Requirement           | `DEV-PRD-042`  |
+| `DEV-SDS`  | Software Design Spec          | `DEV-SDS-015`  |
+| `DEV-TS`   | Technical Specification       | `DEV-TS-007`   |
+| `DEV-SPEC` | General Development Spec      | `DEV-SPEC-003` |
 
 ## 🛡️ Security Considerations
 
@@ -410,6 +430,7 @@ When documenting:
 ### Spec-Driven Development Workflow
 
 **Standard flow:**
+
 1. **Plan**: Create or update specs (ADR → SDS/TS → PRD)
 2. **Review**: Get stakeholder approval on specs
 3. **Implement**: Build with spec traceability
@@ -417,6 +438,7 @@ When documenting:
 5. **Document**: Update traceability matrix
 
 **AI-assisted flow:**
+
 1. Use `spec.plan.*` chat modes to generate specs
 2. Use `spec.implement` prompt to build from specs
 3. Use `spec.traceability.update` prompt to update matrix
@@ -424,6 +446,7 @@ When documenting:
 ### TDD Integration
 
 When doing TDD with specs:
+
 1. Read spec for requirements
 2. Write failing test referencing spec ID
 3. Implement to pass test
@@ -435,6 +458,7 @@ When doing TDD with specs:
 ### Traceability Metrics
 
 Track in traceability matrix:
+
 - Spec coverage: % of specs with implementations
 - Implementation coverage: % of code with spec IDs
 - Spec drift: Implementations without spec references
@@ -472,10 +496,12 @@ just spec-guard
 ### Generated vs Manual Content
 
 **Generated (Read-Only):**
+
 - `ai_context_bundle/` - Generated by `just ai-context-bundle`
 - `reference/` - Auto-generated API docs
 
 **Manual (Versioned):**
+
 - Spec documents (`dev_*.md`, `specs/`)
 - Traceability matrix
 - How-to guides

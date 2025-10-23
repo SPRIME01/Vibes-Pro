@@ -19,6 +19,7 @@ templates/
 ```
 
 Key rules:
+
 - All template files use the `.j2` suffix and Copier variable syntax (`{{ variable_name }}`) where substitution is required.
 - Assets that ship directly to the generated project without interpolation live under `templates/{{project_slug}}/static/` (see ADR-MERGE-003).
 - Shared documentation templates reside in `templates/docs/` and are used by the documentation generator.
