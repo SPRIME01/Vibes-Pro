@@ -484,4 +484,4 @@ just spec-guard
 ---
 
 _Last updated: 2025-10-13 | Maintained by: VibesPro Project Team_
-_Parent context: see `.github/copilot-instructions.md` (repository root) for master instructions. For a navigation map, see `AGENT-MAP.md` (repository root)._ 
+_Parent context: see `.github/copilot-instructions.md` (repository root) for master instructions. For a navigation map, see `AGENT-MAP.md` (repository root)._
