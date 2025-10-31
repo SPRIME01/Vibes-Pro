@@ -8,10 +8,10 @@ This document describes the comprehensive Jest testing setup for the VibesPro pr
 
 ### Main Configuration
 
-- **`jest.config.json`** - Main Jest configuration for the workspace
-- **`jest.setup.js`** - Global setup file with custom matchers and utilities
-- **`jest.d.ts`** - TypeScript type definitions for custom matchers and globals
-- **`tsconfig.spec.json`** - TypeScript configuration specifically for tests
+-   **`jest.config.json`** - Main Jest configuration for the workspace
+-   **`jest.setup.js`** - Global setup file with custom matchers and utilities
+-   **`jest.d.ts`** - TypeScript type definitions for custom matchers and globals
+-   **`tsconfig.spec.json`** - TypeScript configuration specifically for tests
 
 ### Key Features
 
@@ -44,15 +44,15 @@ pnpm test:jest tests/unit/jest-configuration.test.ts
 
 Jest will automatically discover and run tests matching these patterns:
 
-- `tests/**/*.{test,spec}.{ts,js}`
-- `tools/**/*.{test,spec}.{ts,js}`
-- `generators/**/*.{test,spec}.{ts,js}`
+-   `tests/**/*.{test,spec}.{ts,js}`
+-   `tools/**/*.{test,spec}.{ts,js}`
+-   `generators/**/*.{test,spec}.{ts,js}`
 
 ### Coverage Configuration
 
-- **Threshold**: 80% for branches, functions, lines, and statements
-- **Output**: Text, LCOV, HTML, and Clover formats
-- **Directory**: `coverage/` in workspace root
+-   **Threshold**: 80% for branches, functions, lines, and statements
+-   **Output**: Text, LCOV, HTML, and Clover formats
+-   **Directory**: `coverage/` in workspace root
 
 ### Custom Matchers
 
@@ -82,8 +82,8 @@ testUtils.cleanupTempDir(tempDir);
 
 // Create mock file structure
 testUtils.createMockFiles(baseDir, {
-  "file1.ts": 'export const foo = "bar";',
-  "dir/file2.js": 'console.log("hello");',
+    "file1.ts": 'export const foo = "bar";',
+    "dir/file2.js": 'console.log("hello");',
 });
 ```
 
@@ -91,23 +91,23 @@ testUtils.createMockFiles(baseDir, {
 
 ### Test File Naming
 
-- Use `.test.ts` or `.spec.ts` for test files
-- Place tests close to the code they test when possible
-- Use descriptive names: `user-service.test.ts`, `domain-generator.spec.ts`
+-   Use `.test.ts` or `.spec.ts` for test files
+-   Place tests close to the code they test when possible
+-   Use descriptive names: `user-service.test.ts`, `domain-generator.spec.ts`
 
 ### Test Organization
 
 ```typescript
 describe("ComponentName", () => {
-  describe("method or feature", () => {
-    it("should do something specific", () => {
-      // Test implementation
-    });
+    describe("method or feature", () => {
+        it("should do something specific", () => {
+            // Test implementation
+        });
 
-    it("should handle error cases", () => {
-      // Error handling test
+        it("should handle error cases", () => {
+            // Error handling test
+        });
     });
-  });
 });
 ```
 
@@ -115,8 +115,8 @@ describe("ComponentName", () => {
 
 ```typescript
 it("should handle async operations", async () => {
-  const result = await asyncFunction();
-  expect(result).toBe("expected value");
+    const result = await asyncFunction();
+    expect(result).toBe("expected value");
 });
 ```
 
@@ -126,12 +126,12 @@ Console methods are automatically mocked in tests. To test actual console output
 
 ```typescript
 it("should log specific message", () => {
-  const consoleSpy = jest.spyOn(console, "log");
+    const consoleSpy = jest.spyOn(console, "log");
 
-  functionThatLogs();
+    functionThatLogs();
 
-  expect(consoleSpy).toHaveBeenCalledWith("expected message");
-  consoleSpy.mockRestore();
+    expect(consoleSpy).toHaveBeenCalledWith("expected message");
+    consoleSpy.mockRestore();
 });
 ```
 
@@ -141,35 +141,35 @@ it("should log specific message", () => {
 
 The `tsconfig.spec.json` extends the base configuration with:
 
-- CommonJS module support for Jest compatibility
-- Jest and jest-extended types
-- Source maps for debugging
-- Relaxed isolation for test files
+-   CommonJS module support for Jest compatibility
+-   Jest and jest-extended types
+-   Source maps for debugging
+-   Relaxed isolation for test files
 
 ### Type Definitions
 
 Custom types are defined in `jest.d.ts`:
 
-- Global test utilities interface
-- Custom matcher declarations
-- Extended NodeJS global types
+-   Global test utilities interface
+-   Custom matcher declarations
+-   Extended NodeJS global types
 
 ## Coverage Reports
 
 Coverage reports are generated in multiple formats:
 
-- **Text**: Console output during test runs
-- **HTML**: Interactive browser-viewable report in `coverage/lcov-report/`
-- **LCOV**: Machine-readable format in `coverage/lcov.info`
-- **Clover**: XML format for CI integration
+-   **Text**: Console output during test runs
+-   **HTML**: Interactive browser-viewable report in `coverage/lcov-report/`
+-   **LCOV**: Machine-readable format in `coverage/lcov.info`
+-   **Clover**: XML format for CI integration
 
 ## Integration with Nx
 
 While Jest is configured as a standalone tool, it integrates with the Nx workspace:
 
-- Test files are discovered across all workspace projects
-- Coverage collection includes workspace libraries and tools
-- Respects Nx project boundaries and structure
+-   Test files are discovered across all workspace projects
+-   Coverage collection includes workspace libraries and tools
+-   Respects Nx project boundaries and structure
 
 ## Troubleshooting
 
@@ -177,20 +177,20 @@ While Jest is configured as a standalone tool, it integrates with the Nx workspa
 
 1. **TypeScript Compilation Errors**
 
-   - Ensure `tsconfig.spec.json` includes the test file
-   - Check that custom types are properly imported
-   - Verify Jest globals are available in test files
+    - Ensure `tsconfig.spec.json` includes the test file
+    - Check that custom types are properly imported
+    - Verify Jest globals are available in test files
 
 2. **Module Resolution Issues**
 
-   - Check `moduleNameMapping` in Jest config
-   - Ensure relative imports use correct paths
-   - Verify external dependencies are installed
+    - Check `moduleNameMapping` in Jest config
+    - Ensure relative imports use correct paths
+    - Verify external dependencies are installed
 
 3. **Test Discovery Problems**
-   - Confirm test files match the pattern in `testMatch`
-   - Check file extensions are supported
-   - Ensure test files are not in ignored directories
+    - Confirm test files match the pattern in `testMatch`
+    - Check file extensions are supported
+    - Ensure test files are not in ignored directories
 
 ### Debug Mode
 
@@ -208,13 +208,13 @@ node --inspect-brk node_modules/.bin/jest --runInBand
 
 ### Parallel Execution
 
-- Jest runs tests in parallel by default
-- Use `--runInBand` for debugging or CI environments with limited resources
+-   Jest runs tests in parallel by default
+-   Use `--runInBand` for debugging or CI environments with limited resources
 
 ### Cache Management
 
-- Jest caches transformed files for faster subsequent runs
-- Clear cache if experiencing issues: `pnpm test:jest --clearCache`
+-   Jest caches transformed files for faster subsequent runs
+-   Clear cache if experiencing issues: `pnpm test:jest --clearCache`
 
 ### Selective Testing
 
